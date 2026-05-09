@@ -1,0 +1,87 @@
+# Hybrid Self-Reflective RAG for CS Course QA
+
+面向计算机专业课程问答的实验型 RAG 项目。项目目标不是做一个普通聊天机器人，而是构建可复现实验：比较 Naive RAG、Hybrid RAG、Hybrid + Reranker、Graph + Reflection RAG 和 Graph + Pruning RAG 在课程问答任务上的检索与生成表现。
+
+## 研究问题
+
+在计算机课程问答场景中，BM25 与向量检索融合、课程概念图谱扩展、候选集内 hard-negative 重排序训练、证据压缩，是否能够提升证据召回率、排序质量和引用准确率？
+
+## 功能
+
+- Markdown 课程资料切分与索引
+- BM25 稀疏检索
+- TF-IDF 向量检索 baseline
+- 可选 sentence-transformers / BGE embedding 后端
+- RRF 排序融合
+- 基于课程概念共现的轻量 GraphRAG
+- 基于 hard negative 的 Logistic Regression 重排序器
+- GraphRAG 证据压缩，降低图扩展噪声
+- Recall@k、MRR、NDCG、Context Precision 评测
+- Faithfulness、Answer Coverage、Citation Accuracy、Citation Recall 生成评测
+- 自动生成实验结果与错误案例分析
+
+## 快速开始
+
+```powershell
+python -m venv .venv
+.venv\Scripts\Activate.ps1
+pip install -r requirements.txt
+pip install -e .
+cs-rag prepare
+cs-rag train-reranker
+cs-rag evaluate
+cs-rag evaluate-generation
+cs-rag build-showcase
+```
+
+更完整的复现实验说明见 [RUNBOOK.md](RUNBOOK.md)。
+
+## 使用真实 Embedding 检索
+
+默认 dense retriever 使用 TF-IDF，优点是轻量、无需下载模型。如果想升级为 sentence-transformers / BGE embedding：
+
+```powershell
+pip install -r requirements-embeddings.txt
+$env:CS_RAG_DENSE_BACKEND="sentence-transformers"
+$env:CS_RAG_EMBEDDING_MODEL="BAAI/bge-small-zh-v1.5"
+cs-rag prepare
+cs-rag train-reranker
+cs-rag evaluate
+```
+
+如果模型下载或加载失败，系统会回退到 TF-IDF dense retriever。
+
+## 目录结构
+
+```text
+data/raw/cs_courses.md        # 课程语料，当前包含 34 个知识点
+data/qa/eval_qa.jsonl         # 评测集，当前包含 100 条标注问答
+src/hybrid_rag_cs_qa/         # 实验代码
+artifacts/                    # 训练后的 reranker
+reports/experiment_results.md # 检索指标表格
+reports/error_analysis.md     # 错误案例分析
+reports/generation_results.md # 生成答案质量评测
+reports/final_showcase.md     # 最终展示页
+reports/interview_cheatsheet.md # 面试讲稿
+reports/figures/              # 自动生成的 SVG 图表
+reports/embedding_experiment_notes.md # embedding 后端实验记录
+RUNBOOK.md                     # 复现实验与展示流程
+```
+
+## 当前实验结果
+
+运行 `cs-rag evaluate` 后会自动更新 `reports/experiment_results.md`。当前 100 条 QA 上：
+
+- `hybrid_rerank` 相比 `hybrid` 提升了 MRR，说明候选集内 hard-negative 训练开始发挥作用。
+- `graph_reflect` 显著提升 Recall@5、MRR 和 NDCG，但 Context Precision 更低，说明图扩展带来噪声。
+- `graph_pruned` 在几乎保持召回的同时，将 Context Precision 从 `0.4140` 提升到 `0.6450`，说明证据压缩能有效降低 GraphRAG 噪声。
+- `evaluate-generation` 会生成 Faithfulness、Answer Coverage、Citation Accuracy 和 Citation Recall，用于评估答案是否被上下文支持、是否覆盖标准答案要点，以及引用是否命中标注证据。
+- `build-showcase` 会生成最终展示页、SVG 指标图和面试讲稿。
+
+## 可写进报告的结论
+
+GraphRAG 通过课程概念图扩展候选证据，在多跳问题和概念关联问题上能补足普通向量检索的漏召回；但图扩展会引入相邻概念文本，导致上下文精度下降。加入证据压缩后，系统几乎保持 GraphRAG 的召回能力，同时明显提升 Context Precision 和 Citation Accuracy。
+
+## 简历描述
+
+独立完成面向计算机课程问答的 Hybrid Self-Reflective GraphRAG 系统，构建 34 个课程知识点与 100 条标注问答评测集；设计 BM25 + dense retrieval + RRF 融合检索、概念图谱扩展检索、hard-negative 监督式重排序与证据压缩流程，并使用 Recall@k、MRR、NDCG、Context Precision、Faithfulness、Citation Recall 等指标完成系统性实验评估。

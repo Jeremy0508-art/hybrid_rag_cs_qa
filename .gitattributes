@@ -1,0 +1,6 @@
+*.py text eol=lf
+*.md text eol=lf working-tree-encoding=UTF-8
+*.jsonl text eol=lf working-tree-encoding=UTF-8
+*.toml text eol=lf
+*.txt text eol=lf
+*.svg text eol=lf

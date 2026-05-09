@@ -1,0 +1,100 @@
+{"id":"q1","question":"为什么线程切换通常比进程切换开销更低？","answer":"线程共享同一进程的地址空间和资源，因此切换时不需要像进程切换那样更换完整资源上下文。","evidence_ids":["os-进程与线程"],"difficulty":"easy","type":"explanation"}
+{"id":"q2","question":"互斥锁、信号量和管程分别适合解决什么并发问题？","answer":"互斥锁用于保护临界区，信号量适合描述资源计数约束，管程把共享数据和操作封装起来并通过条件变量实现等待通知。","evidence_ids":["os-同步互斥与信号量"],"difficulty":"medium","type":"comparison"}
+{"id":"q3","question":"死锁产生需要哪些必要条件，银行家算法如何避免死锁？","answer":"死锁需要互斥、请求并保持、不可剥夺和循环等待。银行家算法通过安全性检查，只在系统仍存在安全序列时分配资源。","evidence_ids":["os-死锁与银行家算法"],"difficulty":"medium","type":"definition"}
+{"id":"q4","question":"LRU 页面置换为什么能利用程序局部性？","answer":"LRU 淘汰最长时间未被访问的页面，假设近期未访问的页面近期继续被访问的概率较低，因此符合时间局部性。","evidence_ids":["os-虚拟内存与页面置换"],"difficulty":"medium","type":"reasoning"}
+{"id":"q5","question":"TLB 为什么可以降低虚拟地址转换开销？","answer":"TLB 缓存常用页表项，命中时无需再次访问页表，因此能减少地址转换所需的内存访问次数。","evidence_ids":["os-页表与-tlb"],"difficulty":"medium","type":"reasoning"}
+{"id":"q6","question":"先来先服务和短作业优先调度各有什么问题？","answer":"先来先服务可能使短作业等待过长，短作业优先能降低平均等待时间但可能导致长作业饥饿。","evidence_ids":["os-cpu-调度算法"],"difficulty":"medium","type":"comparison"}
+{"id":"q7","question":"inode 通常保存哪些信息，为什么它不直接保存文件名？","answer":"inode 保存权限、大小、时间戳和数据块地址等元数据；文件名通常保存在目录项中，目录项再关联到 inode。","evidence_ids":["os-文件系统与-inode"],"difficulty":"medium","type":"explanation"}
+{"id":"q8","question":"TCP 和 UDP 在可靠性和延迟方面有什么区别？","answer":"TCP 面向连接并通过确认、重传、滑动窗口和拥塞控制保证可靠有序；UDP 无连接、不保证可靠性，但开销小延迟低。","evidence_ids":["net-tcp-与-udp"],"difficulty":"easy","type":"comparison"}
+{"id":"q9","question":"TCP 为什么建立连接需要三次握手？","answer":"三次握手可以确认双方发送和接收能力，并同步初始序列号。","evidence_ids":["net-三次握手与四次挥手"],"difficulty":"medium","type":"explanation"}
+{"id":"q10","question":"滑动窗口和拥塞控制分别解决什么问题？","answer":"滑动窗口主要做流量控制，限制发送方不要超过接收方处理能力；拥塞控制关注网络内部负载，根据丢包和 ACK 调整拥塞窗口。","evidence_ids":["net-拥塞控制与滑动窗口"],"difficulty":"medium","type":"comparison"}
+{"id":"q11","question":"DNS 递归解析通常会经过哪些服务器？","answer":"本地域名服务器会代表客户端逐级查询根域名服务器、顶级域名服务器和权威域名服务器。","evidence_ids":["net-dns-解析过程"],"difficulty":"easy","type":"process"}
+{"id":"q12","question":"HTTPS 相比 HTTP 额外提供了哪些安全能力？","answer":"HTTPS 通过 TLS 提供身份认证、加密传输和完整性保护，可以降低窃听和中间人攻击风险。","evidence_ids":["net-http-https-与-tls"],"difficulty":"medium","type":"comparison"}
+{"id":"q13","question":"NAT 为什么会影响端到端连接模型？","answer":"NAT 会把内网私有地址映射为公网地址，外部主机不能直接根据内网地址访问内部主机，因此改变了原本端到端可达的模型。","evidence_ids":["net-ip-路由与-nat"],"difficulty":"hard","type":"reasoning"}
+{"id":"q14","question":"子网划分有什么作用？","answer":"子网划分可以减少广播范围、改进地址管理，并通过路由聚合减少路由表规模。","evidence_ids":["net-子网划分"],"difficulty":"medium","type":"application"}
+{"id":"q15","question":"事务的 ACID 分别表示什么？","answer":"ACID 是原子性、一致性、隔离性和持久性。","evidence_ids":["db-事务与-acid"],"difficulty":"easy","type":"definition"}
+{"id":"q16","question":"两阶段锁和隔离级别如何影响并发异常？","answer":"较低隔离级别可能出现脏读、不可重复读和幻读；两阶段锁通过加锁和解锁阶段约束事务，可保证冲突可串行化。","evidence_ids":["db-隔离级别与并发异常"],"difficulty":"hard","type":"multi-hop"}
+{"id":"q17","question":"为什么数据库范围查询通常更适合使用 B+树索引？","answer":"B+树叶子节点有序并通过链表连接，适合范围扫描；哈希索引更偏向等值查询。","evidence_ids":["db-索引与-b-树"],"difficulty":"medium","type":"reasoning"}
+{"id":"q18","question":"MVCC 为什么可以减少读写之间的锁竞争？","answer":"MVCC 保存多个数据版本，快照读可以读取事务开始时可见的版本，因此读操作不必阻塞写操作。","evidence_ids":["db-mvcc-与快照读"],"difficulty":"medium","type":"reasoning"}
+{"id":"q19","question":"第三范式主要想减少什么问题？","answer":"第三范式通过消除非主属性对候选键的传递依赖，减少数据冗余和更新异常。","evidence_ids":["db-范式与函数依赖"],"difficulty":"medium","type":"definition"}
+{"id":"q20","question":"谓词下推为什么能提高查询效率？","answer":"谓词下推可以尽早过滤无关元组，降低中间结果规模，从而减少后续连接和计算开销。","evidence_ids":["db-关系代数与查询优化"],"difficulty":"medium","type":"reasoning"}
+{"id":"q21","question":"词法分析和语法分析的输入输出有什么区别？","answer":"词法分析把字符流转换为 token 序列；语法分析接收 token 序列并构造语法树或抽象语法树。","evidence_ids":["compiler-词法分析与语法分析"],"difficulty":"easy","type":"comparison"}
+{"id":"q22","question":"为什么词法分析器常把正则表达式转换为 DFA？","answer":"DFA 运行时不需要回溯，能够高效识别输入字符流，因此适合词法分析。","evidence_ids":["compiler-正则表达式-nfa-与-dfa"],"difficulty":"medium","type":"reasoning"}
+{"id":"q23","question":"LL 分析中 FIRST 集和 FOLLOW 集分别有什么作用？","answer":"FIRST 集表示符号串可能推导出的首终结符集合，FOLLOW 集表示某非终结符后面可能出现的终结符集合，用于预测分析选择产生式。","evidence_ids":["compiler-ll分析与-first-follow-集"],"difficulty":"hard","type":"definition"}
+{"id":"q24","question":"LR 分析器通常由哪些部分驱动？","answer":"LR 分析器通常由状态栈、符号栈、ACTION 表和 GOTO 表驱动。","evidence_ids":["compiler-lr分析"],"difficulty":"medium","type":"definition"}
+{"id":"q25","question":"语义分析为什么需要符号表？","answer":"符号表保存标识符的类型、作用域和存储位置，语义分析需要它检查变量声明、类型匹配和函数调用参数。","evidence_ids":["compiler-语义分析与类型检查"],"difficulty":"medium","type":"explanation"}
+{"id":"q26","question":"活跃变量分析可以服务于哪些编译优化？","answer":"活跃变量分析判断变量之后是否会被使用，可用于寄存器分配和死代码删除。","evidence_ids":["compiler-中间代码与活跃变量"],"difficulty":"medium","type":"application"}
+{"id":"q27","question":"图着色寄存器分配中为什么活跃区间冲突的变量不能使用同一寄存器？","answer":"如果两个变量的活跃区间冲突，它们在同一程序点都可能被使用，因此不能覆盖在同一个物理寄存器中。","evidence_ids":["compiler-寄存器分配"],"difficulty":"hard","type":"reasoning"}
+{"id":"q28","question":"为什么专业课程问答中普通向量 RAG 可能表现不好？","answer":"普通 RAG 可能受到分块、语义漂移和多跳推理影响，导致专业术语或跨概念问题召回不足。","evidence_ids":["ai-rag-检索增强生成"],"difficulty":"medium","type":"explanation"}
+{"id":"q29","question":"BM25 和向量检索各自适合什么类型的问题？","answer":"BM25 适合精确术语匹配，向量检索适合同义表达和语义相似问题，二者可用 RRF 融合。","evidence_ids":["ai-bm25-与向量检索"],"difficulty":"medium","type":"comparison"}
+{"id":"q30","question":"hard negative 为什么有助于训练重排序模型？","answer":"hard negative 表面相似但实际不支持答案，能迫使重排序模型学习更细粒度的相关性判断。","evidence_ids":["ai-重排序与-hard-negative"],"difficulty":"medium","type":"reasoning"}
+{"id":"q31","question":"GraphRAG 为什么适合实体关系密集的领域问答？","answer":"知识图谱显式建模概念和关系，可扩展多跳检索路径，GraphRAG 将图结构与文本检索结合。","evidence_ids":["ai-知识图谱与-graphrag"],"difficulty":"hard","type":"reasoning"}
+{"id":"q32","question":"Self-RAG 中的反思检索主要检查哪些内容？","answer":"它检查检索证据是否充分、答案是否被上下文支持，以及是否需要再次检索。","evidence_ids":["ai-self-rag-与反思检索"],"difficulty":"medium","type":"definition"}
+{"id":"q33","question":"Recall@k、MRR 和 NDCG 分别关注 RAG 检索的哪些方面？","answer":"Recall@k 衡量是否召回标准证据，MRR 和 NDCG 关注相关证据的排序质量。","evidence_ids":["ai-rag-评测指标"],"difficulty":"medium","type":"comparison"}
+{"id":"q34","question":"为什么 RAG 项目中可以优先微调 reranker 而不是整个生成模型？","answer":"微调 reranker 或 embedding 模型参数量更小，能直接提升检索相关性，资源需求低于微调整个生成模型。","evidence_ids":["ai-lora-与轻量微调"],"difficulty":"medium","type":"strategy"}
+{"id":"q35","question":"如果一个问题同时涉及 TLB 和缺页中断，应该检索哪部分证据？","answer":"应检索页表与 TLB 相关证据，因为其中说明 TLB 未命中需要访问页表，页表项无效还可能触发缺页中断。","evidence_ids":["os-页表与-tlb"],"difficulty":"hard","type":"multi-hop"}
+{"id":"q36","question":"时间片轮转为什么适合分时系统？","answer":"时间片轮转让就绪进程轮流获得 CPU，避免单个进程长期占用处理器，因此适合需要交互响应的分时系统。","evidence_ids":["os-cpu-调度算法"],"difficulty":"medium","type":"application"}
+{"id":"q37","question":"TLS 握手中证书验证的作用是什么？","answer":"证书验证用于确认服务器身份，配合密钥协商提供加密通信基础，降低中间人攻击风险。","evidence_ids":["net-http-https-与-tls"],"difficulty":"medium","type":"explanation"}
+{"id":"q38","question":"最长前缀匹配在路由选择中解决什么问题？","answer":"它用于在多个匹配路由项中选择最具体的下一跳路由。","evidence_ids":["net-ip-路由与-nat"],"difficulty":"medium","type":"definition"}
+{"id":"q39","question":"快照读和事务隔离级别之间有什么关系？","answer":"快照读基于事务可见版本返回结果，是 MVCC 实现并发控制和隔离效果的重要机制。","evidence_ids":["db-mvcc-与快照读","db-隔离级别与并发异常"],"difficulty":"hard","type":"multi-hop"}
+{"id":"q40","question":"查询优化器选择连接顺序时通常依赖什么信息？","answer":"查询优化器会根据统计信息选择连接顺序、访问路径和索引使用方式。","evidence_ids":["db-关系代数与查询优化"],"difficulty":"medium","type":"definition"}
+{"id":"q41","question":"从正则表达式到词法分析器通常经历什么转换链路？","answer":"token 模式由正则表达式描述，再转换为 NFA，随后通过子集构造法转换为 DFA，用于高效识别字符流。","evidence_ids":["compiler-正则表达式-nfa-与-dfa"],"difficulty":"medium","type":"process"}
+{"id":"q42","question":"语义分析和类型检查能发现哪些语法分析发现不了的问题？","answer":"它们能发现变量未声明、类型不匹配、函数调用参数不一致等程序含义层面的错误。","evidence_ids":["compiler-语义分析与类型检查"],"difficulty":"medium","type":"comparison"}
+{"id":"q43","question":"寄存器不足时编译器通常如何处理变量？","answer":"寄存器不足时，编译器需要将部分变量溢出到内存。","evidence_ids":["compiler-寄存器分配"],"difficulty":"easy","type":"definition"}
+{"id":"q44","question":"为什么 GraphRAG 可能提高召回率但降低 Context Precision？","answer":"图扩展能沿概念关系召回更多候选证据，提高召回率，但也可能引入无关文本，导致上下文精度下降。","evidence_ids":["ai-知识图谱与-graphrag"],"difficulty":"hard","type":"error-analysis"}
+{"id":"q45","question":"RAG 中 Faithfulness 指标主要衡量什么？","answer":"Faithfulness 衡量生成答案是否忠实于检索到的上下文。","evidence_ids":["ai-rag-评测指标"],"difficulty":"easy","type":"definition"}
+{"id":"q46","question":"为什么 LoRA 适合资源有限的领域适配任务？","answer":"LoRA 只训练低秩适配矩阵，显著减少需要更新的参数量，因此适合资源有限的微调场景。","evidence_ids":["ai-lora-与轻量微调"],"difficulty":"medium","type":"reasoning"}
+{"id":"q47","question":"如果问题包含精确术语“BCNF”，稀疏检索为什么可能有优势？","answer":"BM25 依赖词项精确匹配和逆文档频率，对 BCNF 这类专业术语查询往往更敏感。","evidence_ids":["ai-bm25-与向量检索","db-范式与函数依赖"],"difficulty":"hard","type":"multi-hop"}
+{"id":"q48","question":"为什么日志文件系统有助于崩溃恢复？","answer":"日志文件系统先记录元数据修改日志，再真正修改磁盘结构，系统崩溃后可以根据日志恢复一致状态。","evidence_ids":["os-文件系统与-inode"],"difficulty":"medium","type":"reasoning"}
+{"id":"q49","question":"DNS 缓存既能提升性能又可能带来什么问题？","answer":"DNS 缓存可以减少解析延迟，但缓存过期或污染会影响解析结果。","evidence_ids":["net-dns-解析过程"],"difficulty":"medium","type":"comparison"}
+{"id":"q50","question":"为什么 RRF 适合融合 BM25 和向量检索结果？","answer":"RRF 可以融合两类排序结果，使精确术语匹配和语义相似召回互补。","evidence_ids":["ai-bm25-与向量检索"],"difficulty":"medium","type":"method"}
+{"id":"q51","question":"进程拥有独立地址空间这一点会如何影响上下文切换成本？","answer":"进程切换通常需要切换地址空间和更多资源上下文，因此比共享地址空间的线程切换成本更高。","evidence_ids":["os-进程与线程"],"difficulty":"medium","type":"reasoning"}
+{"id":"q52","question":"条件变量为什么通常和管程一起出现？","answer":"管程封装共享数据和操作，条件变量用于在管程内部实现线程等待和通知。","evidence_ids":["os-同步互斥与信号量"],"difficulty":"medium","type":"explanation"}
+{"id":"q53","question":"破坏死锁的循环等待条件可以怎样避免死锁？","answer":"死锁需要循环等待作为必要条件，如果通过资源有序分配等方式破坏循环等待，就能避免形成死锁环。","evidence_ids":["os-死锁与银行家算法"],"difficulty":"medium","type":"reasoning"}
+{"id":"q54","question":"缺页中断和页面置换之间有什么关系？","answer":"缺页中断发生后操作系统需要调入页面，若物理页框不足就要执行页面置换。","evidence_ids":["os-虚拟内存与页面置换"],"difficulty":"medium","type":"process"}
+{"id":"q55","question":"TLB 未命中一定会导致缺页中断吗？","answer":"不一定。TLB 未命中只表示缓存中没有页表项，需要访问页表；只有页表项无效时才可能触发缺页中断。","evidence_ids":["os-页表与-tlb"],"difficulty":"hard","type":"comparison"}
+{"id":"q56","question":"优先级调度为什么需要考虑优先级反转？","answer":"优先级调度中低优先级任务可能持有高优先级任务需要的资源，从而造成优先级反转，需要额外机制处理。","evidence_ids":["os-cpu-调度算法"],"difficulty":"hard","type":"reasoning"}
+{"id":"q57","question":"文件名和 inode 的关系是什么？","answer":"inode 保存文件元数据和数据块地址，文件名通常保存在目录项中，目录项再指向 inode。","evidence_ids":["os-文件系统与-inode"],"difficulty":"medium","type":"definition"}
+{"id":"q58","question":"为什么 DNS 适合使用 UDP？","answer":"UDP 无连接、头部开销小、延迟低，适合 DNS 这类短请求响应场景。","evidence_ids":["net-tcp-与-udp"],"difficulty":"medium","type":"application"}
+{"id":"q59","question":"四次挥手为什么比三次握手多一次交互？","answer":"TCP 是全双工通信，连接释放时两个方向需要分别关闭，因此通常需要四次挥手。","evidence_ids":["net-三次握手与四次挥手"],"difficulty":"medium","type":"explanation"}
+{"id":"q60","question":"快速重传和快速恢复属于哪类网络控制机制？","answer":"快速重传和快速恢复属于 TCP 拥塞控制机制，用于根据丢包和 ACK 情况调整传输行为。","evidence_ids":["net-拥塞控制与滑动窗口"],"difficulty":"medium","type":"definition"}
+{"id":"q61","question":"本地域名服务器在递归解析中承担什么角色？","answer":"本地域名服务器代表客户端逐级查询根、顶级域名和权威域名服务器，并把结果返回给客户端。","evidence_ids":["net-dns-解析过程"],"difficulty":"medium","type":"process"}
+{"id":"q62","question":"TLS 如何帮助 HTTPS 防止中间人攻击？","answer":"TLS 通过证书验证完成身份认证，并通过密钥协商建立加密通信，从而降低中间人攻击风险。","evidence_ids":["net-http-https-与-tls"],"difficulty":"medium","type":"reasoning"}
+{"id":"q63","question":"最长前缀匹配为什么要选择最具体的路由项？","answer":"当多个路由项都匹配目标地址时，最长前缀匹配选择前缀最长的项，从而选择最具体的下一跳。","evidence_ids":["net-ip-路由与-nat"],"difficulty":"medium","type":"definition"}
+{"id":"q64","question":"路由聚合和子网划分之间有什么关系？","answer":"合理的子网划分可以配合路由聚合减少路由表规模，同时改善地址管理。","evidence_ids":["net-子网划分"],"difficulty":"medium","type":"reasoning"}
+{"id":"q65","question":"事务持久性要求数据库在系统故障后保证什么？","answer":"持久性要求事务提交后的修改即使系统故障也不能丢失。","evidence_ids":["db-事务与-acid"],"difficulty":"easy","type":"definition"}
+{"id":"q66","question":"脏读和不可重复读通常出现在什么背景下？","answer":"它们是较低事务隔离级别下可能出现的并发异常。","evidence_ids":["db-隔离级别与并发异常"],"difficulty":"easy","type":"definition"}
+{"id":"q67","question":"B+树叶子节点链表为什么有利于范围扫描？","answer":"B+树叶子节点有序且通过链表相连，范围查询可以顺序扫描相邻叶子节点。","evidence_ids":["db-索引与-b-树"],"difficulty":"medium","type":"reasoning"}
+{"id":"q68","question":"MVCC 的版本回收为什么是实现成本之一？","answer":"MVCC 保存多个数据版本以支持并发读写，但旧版本需要回收并进行可见性判断，因此带来额外实现成本。","evidence_ids":["db-mvcc-与快照读"],"difficulty":"hard","type":"reasoning"}
+{"id":"q69","question":"BCNF 相比第三范式为什么更严格？","answer":"BCNF 对决定因素提出更严格约束，要求每个非平凡函数依赖的决定因素都应是候选键。","evidence_ids":["db-范式与函数依赖"],"difficulty":"hard","type":"comparison"}
+{"id":"q70","question":"查询优化器为什么要选择访问路径？","answer":"查询优化器会根据统计信息选择访问路径和索引使用方式，以降低查询执行代价。","evidence_ids":["db-关系代数与查询优化"],"difficulty":"medium","type":"reasoning"}
+{"id":"q71","question":"token 序列为什么是词法分析和语法分析之间的接口？","answer":"词法分析把字符流转换为 token 序列，语法分析再根据文法检查 token 序列并构造语法结构。","evidence_ids":["compiler-词法分析与语法分析"],"difficulty":"medium","type":"explanation"}
+{"id":"q72","question":"子集构造法在词法分析器生成中有什么作用？","answer":"子集构造法用于把 NFA 转换为 DFA，使词法分析器运行时可以高效识别输入字符流。","evidence_ids":["compiler-正则表达式-nfa-与-dfa"],"difficulty":"medium","type":"process"}
+{"id":"q73","question":"LL 分析为什么需要向前看符号？","answer":"LL 分析需要根据当前非终结符和向前看符号选择产生式，因此需要向前看符号辅助预测。","evidence_ids":["compiler-ll分析与-first-follow-集"],"difficulty":"medium","type":"reasoning"}
+{"id":"q74","question":"LR 分析中的 ACTION 表和 GOTO 表分别服务于什么过程？","answer":"LR 分析器由 ACTION 表和 GOTO 表驱动，配合状态栈和符号栈完成移进、归约和状态转移。","evidence_ids":["compiler-lr分析"],"difficulty":"hard","type":"definition"}
+{"id":"q75","question":"变量未声明属于哪一类编译错误检查？","answer":"变量未声明属于语义分析阶段检查的问题，需要结合符号表判断。","evidence_ids":["compiler-语义分析与类型检查"],"difficulty":"easy","type":"definition"}
+{"id":"q76","question":"三地址码为什么适合作为中间代码？","answer":"三地址码是中间代码常见形式，位于源语言和目标机器代码之间，便于进行数据流分析和优化。","evidence_ids":["compiler-中间代码与活跃变量"],"difficulty":"medium","type":"explanation"}
+{"id":"q77","question":"变量溢出到内存通常发生在什么情况下？","answer":"寄存器数量不足时，编译器需要将部分变量溢出到内存。","evidence_ids":["compiler-寄存器分配"],"difficulty":"easy","type":"definition"}
+{"id":"q78","question":"RAG 如何缓解大模型知识过时问题？","answer":"RAG 在生成答案前检索外部知识，使模型可以利用知识库中的新信息回答问题。","evidence_ids":["ai-rag-检索增强生成"],"difficulty":"easy","type":"explanation"}
+{"id":"q79","question":"为什么 BM25 对精确术语问题比较敏感？","answer":"BM25 依赖词项匹配、词频和逆文档频率，因此对专业术语精确匹配问题比较敏感。","evidence_ids":["ai-bm25-与向量检索"],"difficulty":"medium","type":"reasoning"}
+{"id":"q80","question":"重排序器为什么通常放在初召回之后？","answer":"重排序器在初召回结果上进一步判断 query-document 相关性，可以用较小候选集提高前几名证据质量。","evidence_ids":["ai-重排序与-hard-negative"],"difficulty":"medium","type":"method"}
+{"id":"q81","question":"图路径扩展为什么可能带来无关证据？","answer":"知识图谱沿相邻概念扩展会召回更多文本，虽然提高召回率，但相邻概念不一定直接支持答案，可能引入噪声。","evidence_ids":["ai-知识图谱与-graphrag"],"difficulty":"hard","type":"error-analysis"}
+{"id":"q82","question":"Self-RAG 为什么适合需要明确证据的专业问答？","answer":"Self-RAG 会判断证据是否充分、答案是否被上下文支持以及是否需要再次检索，可降低专业问答中的幻觉风险。","evidence_ids":["ai-self-rag-与反思检索"],"difficulty":"medium","type":"reasoning"}
+{"id":"q83","question":"Citation Accuracy 和 Faithfulness 的关注点有什么区别？","answer":"Citation Accuracy 关注引用是否命中标注证据，Faithfulness 关注答案内容是否忠实于检索上下文。","evidence_ids":["ai-rag-评测指标"],"difficulty":"medium","type":"comparison"}
+{"id":"q84","question":"在资源有限时，为什么微调 embedding 或 reranker 比直接微调整个生成模型更实际？","answer":"微调 embedding 或 reranker 参数量和资源需求更低，同时能直接提升检索相关性。","evidence_ids":["ai-lora-与轻量微调"],"difficulty":"medium","type":"strategy"}
+{"id":"q85","question":"线程共享地址空间为什么会带来同步问题？","answer":"同一进程内线程共享地址空间和打开文件，多个线程并发访问共享数据时可能产生竞态条件，需要同步互斥。","evidence_ids":["os-进程与线程","os-同步互斥与信号量"],"difficulty":"hard","type":"multi-hop"}
+{"id":"q86","question":"安全序列和死锁避免之间有什么联系？","answer":"银行家算法通过检查系统是否存在安全序列决定是否分配资源，从而避免系统进入不安全状态。","evidence_ids":["os-死锁与银行家算法"],"difficulty":"medium","type":"explanation"}
+{"id":"q87","question":"虚拟内存、页表和 TLB 三者如何共同参与地址转换？","answer":"虚拟内存依赖地址转换，页表保存虚拟页到物理页框的映射，TLB 缓存页表项以降低转换开销。","evidence_ids":["os-虚拟内存与页面置换","os-页表与-tlb"],"difficulty":"hard","type":"multi-hop"}
+{"id":"q88","question":"TCP 可靠传输和拥塞控制分别关注什么层面的问题？","answer":"TCP 可靠传输关注确认、重传、有序交付等端到端可靠性，拥塞控制关注网络内部负载并调整拥塞窗口。","evidence_ids":["net-tcp-与-udp","net-拥塞控制与滑动窗口"],"difficulty":"hard","type":"multi-hop"}
+{"id":"q89","question":"HTTPS、TLS 和 TCP 的关系是什么？","answer":"HTTPS 在 HTTP 与 TCP 之间加入 TLS，TLS 提供身份认证、加密传输和完整性保护。","evidence_ids":["net-http-https-与-tls"],"difficulty":"medium","type":"relationship"}
+{"id":"q90","question":"NAT 和子网划分都与 IP 地址管理有关，它们解决的问题有什么不同？","answer":"子网划分用于拆分地址块、减少广播范围和改进地址管理；NAT 将私有地址映射为公网地址以缓解 IPv4 地址不足。","evidence_ids":["net-ip-路由与-nat","net-子网划分"],"difficulty":"hard","type":"comparison"}
+{"id":"q91","question":"事务隔离和 MVCC 如何共同提升数据库并发能力？","answer":"隔离级别定义并发可见性与异常范围，MVCC 通过多版本和快照读减少读写阻塞，实现并发控制。","evidence_ids":["db-隔离级别与并发异常","db-mvcc-与快照读"],"difficulty":"hard","type":"multi-hop"}
+{"id":"q92","question":"B+树索引和查询优化器之间有什么联系？","answer":"B+树是一种常见索引结构，查询优化器会根据统计信息选择是否使用索引和访问路径。","evidence_ids":["db-索引与-b-树","db-关系代数与查询优化"],"difficulty":"hard","type":"multi-hop"}
+{"id":"q93","question":"范式设计和查询优化关注数据库系统的哪些不同阶段？","answer":"范式设计关注模式设计阶段的数据冗余和更新异常，查询优化关注查询执行阶段的连接顺序、访问路径和索引选择。","evidence_ids":["db-范式与函数依赖","db-关系代数与查询优化"],"difficulty":"hard","type":"comparison"}
+{"id":"q94","question":"词法分析中的 DFA 和语法分析中的 LR 分析有什么区别？","answer":"DFA 用于高效识别字符流中的 token，LR 分析用于根据上下文无关文法分析 token 序列的语法结构。","evidence_ids":["compiler-正则表达式-nfa-与-dfa","compiler-lr分析"],"difficulty":"hard","type":"comparison"}
+{"id":"q95","question":"符号表为什么会同时影响语义分析和后续代码生成？","answer":"符号表保存标识符类型、作用域和存储位置，既服务语义检查，也为后续中间代码或目标代码生成提供信息。","evidence_ids":["compiler-语义分析与类型检查","compiler-中间代码与活跃变量"],"difficulty":"hard","type":"multi-hop"}
+{"id":"q96","question":"活跃变量分析和寄存器分配之间有什么关系？","answer":"活跃变量分析判断变量之后是否还会被使用，寄存器分配可利用活跃区间冲突决定变量是否能共享寄存器。","evidence_ids":["compiler-中间代码与活跃变量","compiler-寄存器分配"],"difficulty":"hard","type":"multi-hop"}
+{"id":"q97","question":"普通 RAG、GraphRAG 和 Self-RAG 分别缓解什么问题？","answer":"普通 RAG 检索外部知识缓解知识过时和幻觉；GraphRAG 用图结构扩展多跳检索；Self-RAG 通过反思检查证据充分性和答案支持性。","evidence_ids":["ai-rag-检索增强生成","ai-知识图谱与-graphrag","ai-self-rag-与反思检索"],"difficulty":"hard","type":"comparison"}
+{"id":"q98","question":"为什么 RAG 系统既要看 Recall@k 也要看 Context Precision？","answer":"Recall@k 衡量是否召回标准证据，Context Precision 衡量返回上下文中有效证据比例，二者共同反映召回能力和噪声水平。","evidence_ids":["ai-rag-评测指标"],"difficulty":"medium","type":"evaluation"}
+{"id":"q99","question":"hard negative 和 reranker 在降低 GraphRAG 噪声方面如何配合？","answer":"GraphRAG 扩展会引入噪声，hard negative 可用于训练 reranker 区分表面相似但不支持答案的候选证据。","evidence_ids":["ai-重排序与-hard-negative","ai-知识图谱与-graphrag"],"difficulty":"hard","type":"multi-hop"}
+{"id":"q100","question":"为什么轻量微调在本项目中优先作用于检索模块而不是生成模块？","answer":"本项目资源有限且目标是提升证据质量，微调 embedding 或 reranker 能直接提升检索相关性，比微调整个生成模型更可控。","evidence_ids":["ai-lora-与轻量微调","ai-重排序与-hard-negative"],"difficulty":"medium","type":"strategy"}
