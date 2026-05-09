@@ -33,6 +33,7 @@ cs-rag train-reranker
 cs-rag evaluate
 cs-rag evaluate-generation
 cs-rag build-showcase
+cs-rag check-llm
 ```
 
 更完整的复现实验说明见 [RUNBOOK.md](RUNBOOK.md)。
@@ -65,6 +66,8 @@ cs-rag evaluate-generation --generator openai-compatible
 
 如果未配置 endpoint 或调用失败，系统会自动回退到抽取式生成。
 
+Ollama 安装与本地模型运行说明见 [OLLAMA.md](OLLAMA.md)。
+
 ## 目录结构
 
 ```text
@@ -80,6 +83,7 @@ reports/interview_cheatsheet.md # 面试讲稿
 reports/figures/              # 自动生成的 SVG 图表
 reports/embedding_experiment_notes.md # embedding 后端实验记录
 RUNBOOK.md                     # 复现实验与展示流程
+OLLAMA.md                      # 本地 Ollama 运行说明
 ```
 
 ## 当前实验结果

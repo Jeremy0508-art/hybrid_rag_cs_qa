@@ -34,6 +34,7 @@ cs-rag train-reranker
 cs-rag evaluate
 cs-rag evaluate-generation
 cs-rag build-showcase
+cs-rag check-llm
 ```
 
 如果已配置 LLM endpoint，可运行：

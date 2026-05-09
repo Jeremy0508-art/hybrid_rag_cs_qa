@@ -7,6 +7,7 @@ from .data import load_chunks, load_qa
 from .evaluate import evaluate
 from .generation import evaluate_generation
 from .graph_rag import GraphExpander
+from .llm import print_llm_status
 from .pipeline import RagPipeline
 from .reranker import FeatureReranker
 from .retrievers import BM25Retriever, DenseRetriever, rrf_fuse
@@ -27,6 +28,7 @@ def main() -> None:
     sub.add_parser("train-reranker")
     sub.add_parser("evaluate")
     sub.add_parser("build-showcase")
+    sub.add_parser("check-llm")
     gen_eval = sub.add_parser("evaluate-generation")
     gen_eval.add_argument("--method", default="graph_pruned")
     gen_eval.add_argument("--top-k", type=int, default=3)
@@ -88,6 +90,8 @@ def main() -> None:
         paths = build_showcase(RESULTS, ROOT / "reports" / "generation_results.json", ROOT / "reports")
         for name, path in paths.items():
             print(f"{name}: {path}")
+    elif args.command == "check-llm":
+        print_llm_status()
     elif args.command == "ask":
         pipeline = RagPipeline(CORPUS, reranker_path=RERANKER)
         result = pipeline.answer_extractive(args.question, method=args.method, generator=args.generator)
