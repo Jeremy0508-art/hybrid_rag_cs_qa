@@ -30,9 +30,11 @@ def main() -> None:
     gen_eval = sub.add_parser("evaluate-generation")
     gen_eval.add_argument("--method", default="graph_pruned")
     gen_eval.add_argument("--top-k", type=int, default=3)
+    gen_eval.add_argument("--generator", default="extractive", choices=["extractive", "openai-compatible", "llm"])
     ask = sub.add_parser("ask")
     ask.add_argument("question")
     ask.add_argument("--method", default="graph_pruned")
+    ask.add_argument("--generator", default="extractive", choices=["extractive", "openai-compatible", "llm"])
     args = parser.parse_args()
 
     if args.command == "prepare":
@@ -71,7 +73,15 @@ def main() -> None:
             print(method, {k: v for k, v in metrics.items() if k not in {"examples", "rows"}})
     elif args.command == "evaluate-generation":
         out_path = ROOT / "reports" / "generation_results.json"
-        report = evaluate_generation(CORPUS, QA, RERANKER, out_path, method=args.method, top_k=args.top_k)
+        report = evaluate_generation(
+            CORPUS,
+            QA,
+            RERANKER,
+            out_path,
+            method=args.method,
+            top_k=args.top_k,
+            generator=args.generator,
+        )
         print(f"Saved generation results to {out_path}")
         print({k: v for k, v in report.items() if k != "rows"})
     elif args.command == "build-showcase":
@@ -80,7 +90,7 @@ def main() -> None:
             print(f"{name}: {path}")
     elif args.command == "ask":
         pipeline = RagPipeline(CORPUS, reranker_path=RERANKER)
-        result = pipeline.answer_extractive(args.question, method=args.method)
+        result = pipeline.answer_extractive(args.question, method=args.method, generator=args.generator)
         print(result)
 
 

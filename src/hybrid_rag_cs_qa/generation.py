@@ -5,6 +5,7 @@ import re
 from pathlib import Path
 
 from .data import load_qa
+from .llm import generate_openai_compatible_answer
 from .schema import QAItem, SearchResult
 from .text import tokenize
 
@@ -47,27 +48,40 @@ def generate_extractive_answer(question: str, results: list[SearchResult], max_s
     return "".join(answer_parts)
 
 
+def generate_answer(question: str, results: list[SearchResult], generator: str = "extractive") -> tuple[str, str]:
+    if generator in {"openai-compatible", "llm"}:
+        llm_answer = generate_openai_compatible_answer(question, results)
+        if llm_answer:
+            return llm_answer, "openai-compatible"
+    return generate_extractive_answer(question, results), "extractive"
+
+
 def evaluate_generation(
     corpus_path: Path,
     qa_path: Path,
     reranker_path: Path,
     out_path: Path,
-    method: str = "graph_reflect",
+    method: str = "graph_pruned",
     top_k: int = 3,
+    generator: str = "extractive",
 ) -> dict:
     from .pipeline import RagPipeline
 
     pipeline = RagPipeline(corpus_path, reranker_path=reranker_path)
     qa_items = load_qa(qa_path)
     rows = []
+    used_generators: set[str] = set()
     for item in qa_items:
         results = pipeline.search(item.question, method=method, top_k=top_k)
-        answer = generate_extractive_answer(item.question, results)
+        answer, used_generator = generate_answer(item.question, results, generator=generator)
+        used_generators.add(used_generator)
         rows.append(score_answer(item, answer, results))
 
     report = summarize_generation(rows) | {
         "method": method,
         "top_k": top_k,
+        "generator": generator,
+        "used_generators": sorted(used_generators),
         "num_questions": len(rows),
         "rows": rows,
     }
@@ -146,6 +160,8 @@ def write_generation_report(report: dict, path: Path) -> None:
         "# Generation Evaluation Report",
         "",
         f"- Method: `{report['method']}`",
+        f"- Generator: `{report['generator']}`",
+        f"- Used generators: `{', '.join(report['used_generators'])}`",
         f"- Top-k evidence: `{report['top_k']}`",
         f"- Questions: `{report['num_questions']}`",
         "",

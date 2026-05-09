@@ -170,6 +170,8 @@ Graph + Pruning RAG 在 Graph + Reflection RAG 的候选结果上进行证据压
 
 当前抽取式生成的优势是 Faithfulness 较高，因为答案直接来自检索上下文；不足是 Answer Coverage 可能较低，因为它不一定复述标准答案中的抽象表达。后续接入真实 LLM 后，可以在保持 citation 约束的前提下生成更自然、更完整的答案，并继续使用这些指标评估忠实度和引用质量。
 
+系统已经支持可选 OpenAI-compatible 生成后端。配置 `CS_RAG_LLM_BASE_URL` 和 `CS_RAG_LLM_MODEL` 后，可以通过 `--generator openai-compatible` 调用本地 Ollama 或兼容 `/v1/chat/completions` 的模型服务；若未配置 endpoint 或调用失败，则自动回退到抽取式生成。
+
 当前 `graph_pruned` 方法在 Top-3 证据上的生成评测结果如下：
 
 | Metric | Score |
@@ -193,7 +195,7 @@ Graph + Pruning RAG 在 Graph + Reflection RAG 的候选结果上进行证据压
 
 ## 10. 不足与后续工作
 
-当前系统仍有几个限制。第一，虽然系统已经支持 sentence-transformers embedding，但当前报告中的主结果仍基于轻量 TF-IDF baseline；本地尝试加载 `BAAI/bge-small-zh-v1.5` 时受 HuggingFace 下载速度影响超时，后续应在网络稳定或已有本地模型缓存的环境下补充 BGE/E5 embedding 对比实验。第二，reranker 使用 Logistic Regression，表达能力有限，后续可以替换为 CrossEncoder 或 bge-reranker。第三，当前答案生成是抽取式摘要，尚未接入真实 LLM，因此还不能完整评估自然语言生成质量。第四，当前评测集规模为 100 条，后续可继续扩展到 200 条，并加入更多跨章节、多证据问题。
+当前系统仍有几个限制。第一，虽然系统已经支持 sentence-transformers embedding，但当前报告中的主结果仍基于轻量 TF-IDF baseline；本地尝试加载 `BAAI/bge-small-zh-v1.5` 时受 HuggingFace 下载速度影响超时，后续应在网络稳定或已有本地模型缓存的环境下补充 BGE/E5 embedding 对比实验。第二，reranker 使用 Logistic Regression，表达能力有限，后续可以替换为 CrossEncoder 或 bge-reranker。第三，系统已支持 OpenAI-compatible LLM 后端，但当前主报告仍采用抽取式生成作为可复现 baseline，后续应补充真实 LLM 的生成质量对比。第四，当前评测集规模为 100 条，后续可继续扩展到 200 条，并加入更多跨章节、多证据问题。
 
 下一步计划是升级 embedding 与 reranker，并接入真实 LLM 生成答案，在检索指标之外继续评估回答忠实度和引用准确率。
 

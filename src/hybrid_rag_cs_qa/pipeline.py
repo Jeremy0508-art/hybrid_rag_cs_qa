@@ -4,7 +4,7 @@ from pathlib import Path
 
 from .data import extract_concepts, load_chunks
 from .graph_rag import GraphExpander
-from .generation import generate_extractive_answer
+from .generation import generate_answer
 from .reranker import FeatureReranker
 from .retrievers import BM25Retriever, DenseRetriever, rrf_fuse
 from .schema import SearchResult
@@ -42,14 +42,20 @@ class RagPipeline:
             return self._compress_evidence(question, reranked, max_results=min(3, top_k))
         raise ValueError(f"Unknown method: {method}")
 
-    def answer_extractive(self, question: str, method: str = "graph_pruned") -> dict[str, object]:
+    def answer_extractive(
+        self,
+        question: str,
+        method: str = "graph_pruned",
+        generator: str = "extractive",
+    ) -> dict[str, object]:
         results = self.search(question, method=method, top_k=3)
-        answer = generate_extractive_answer(question, results)
+        answer, used_generator = generate_answer(question, results, generator=generator)
         return {
             "question": question,
             "answer": answer,
             "citations": [r.chunk.id for r in results],
             "method": method,
+            "generator": used_generator,
         }
 
     @staticmethod

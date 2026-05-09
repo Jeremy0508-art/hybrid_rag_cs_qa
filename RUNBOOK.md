@@ -19,6 +19,13 @@ $env:CS_RAG_EMBEDDING_MODEL="BAAI/bge-small-zh-v1.5"
 
 默认不设置环境变量时，系统使用 TF-IDF dense retriever，保证轻量可复现。
 
+可选真实 LLM 生成：
+
+```powershell
+$env:CS_RAG_LLM_BASE_URL="http://localhost:11434/v1/chat/completions"
+$env:CS_RAG_LLM_MODEL="qwen2.5:7b-instruct"
+```
+
 ## 2. 标准复现实验
 
 ```powershell
@@ -27,6 +34,13 @@ cs-rag train-reranker
 cs-rag evaluate
 cs-rag evaluate-generation
 cs-rag build-showcase
+```
+
+如果已配置 LLM endpoint，可运行：
+
+```powershell
+cs-rag ask "GraphRAG 为什么可能提高召回率但降低 Context Precision？" --generator openai-compatible
+cs-rag evaluate-generation --generator openai-compatible
 ```
 
 ## 3. 输出文件

@@ -1,6 +1,8 @@
 # Generation Evaluation Report
 
 - Method: `graph_pruned`
+- Generator: `extractive`
+- Used generators: `extractive`
 - Top-k evidence: `3`
 - Questions: `100`
 

@@ -18,6 +18,7 @@
 - GraphRAG 证据压缩，降低图扩展噪声
 - Recall@k、MRR、NDCG、Context Precision 评测
 - Faithfulness、Answer Coverage、Citation Accuracy、Citation Recall 生成评测
+- 可选 OpenAI-compatible / Ollama 真实 LLM 生成后端
 - 自动生成实验结果与错误案例分析
 
 ## 快速开始
@@ -50,6 +51,19 @@ cs-rag evaluate
 ```
 
 如果模型下载或加载失败，系统会回退到 TF-IDF dense retriever。
+
+## 使用真实 LLM 生成
+
+默认生成器是 `extractive`，不需要 API。若你有本地 Ollama 或任意 OpenAI-compatible `/v1/chat/completions` 服务，可以这样切换：
+
+```powershell
+$env:CS_RAG_LLM_BASE_URL="http://localhost:11434/v1/chat/completions"
+$env:CS_RAG_LLM_MODEL="qwen2.5:7b-instruct"
+cs-rag ask "GraphRAG 为什么可能提高召回率但降低 Context Precision？" --generator openai-compatible
+cs-rag evaluate-generation --generator openai-compatible
+```
+
+如果未配置 endpoint 或调用失败，系统会自动回退到抽取式生成。
 
 ## 目录结构
 
