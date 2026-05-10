@@ -32,11 +32,13 @@ def main() -> None:
     gen_eval = sub.add_parser("evaluate-generation")
     gen_eval.add_argument("--method", default="graph_pruned")
     gen_eval.add_argument("--top-k", type=int, default=3)
-    gen_eval.add_argument("--generator", default="extractive", choices=["extractive", "openai-compatible", "llm"])
+    gen_eval.add_argument("--generator", default="extractive", choices=["extractive", "openai-compatible", "ollama", "llm"])
+    gen_eval.add_argument("--limit", type=int, default=None)
+    gen_eval.add_argument("--out", default=None)
     ask = sub.add_parser("ask")
     ask.add_argument("question")
     ask.add_argument("--method", default="graph_pruned")
-    ask.add_argument("--generator", default="extractive", choices=["extractive", "openai-compatible", "llm"])
+    ask.add_argument("--generator", default="extractive", choices=["extractive", "openai-compatible", "ollama", "llm"])
     args = parser.parse_args()
 
     if args.command == "prepare":
@@ -74,7 +76,7 @@ def main() -> None:
         for method, metrics in report.items():
             print(method, {k: v for k, v in metrics.items() if k not in {"examples", "rows"}})
     elif args.command == "evaluate-generation":
-        out_path = ROOT / "reports" / "generation_results.json"
+        out_path = Path(args.out) if args.out else ROOT / "reports" / "generation_results.json"
         report = evaluate_generation(
             CORPUS,
             QA,
@@ -83,6 +85,7 @@ def main() -> None:
             method=args.method,
             top_k=args.top_k,
             generator=args.generator,
+            limit=args.limit,
         )
         print(f"Saved generation results to {out_path}")
         print({k: v for k, v in report.items() if k != "rows"})

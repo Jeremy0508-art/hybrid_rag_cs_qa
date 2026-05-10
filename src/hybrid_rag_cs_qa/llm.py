@@ -40,13 +40,18 @@ def generate_openai_compatible_answer(question: str, results: list[SearchResult]
                 "role": "system",
                 "content": (
                     "你是严谨的计算机课程问答助手。只能依据给定证据回答。"
+                    "请直接回答问题，不要泛泛解释无关概念。"
                     "每个关键结论后必须引用对应证据 ID，格式如 [chunk-id]。"
-                    "如果证据不足，请明确说明证据不足。"
+                    "如果证据没有支持某个说法，不要写这个说法。"
+                    "如果证据不足，请明确说明证据不足。回答控制在 4 句话以内。"
                 ),
             },
             {
                 "role": "user",
-                "content": f"问题：{question}\n\n证据：\n{context}\n\n请给出简洁中文答案。",
+                "content": (
+                    f"问题：{question}\n\n证据：\n{context}\n\n"
+                    "请只根据证据回答，并在每句话末尾给出 citation。"
+                ),
             },
         ],
     }
@@ -71,6 +76,42 @@ def generate_openai_compatible_answer(question: str, results: list[SearchResult]
         return None
     message = choices[0].get("message", {})
     content = message.get("content")
+    return content.strip() if isinstance(content, str) and content.strip() else None
+
+
+def generate_ollama_answer(question: str, results: list[SearchResult]) -> str | None:
+    model = os.getenv("CS_RAG_LLM_MODEL", "qwen-rag:0.5b")
+    base_url = os.getenv("CS_RAG_OLLAMA_URL", "http://localhost:11434/api/generate")
+    context = format_context(results)
+    prompt = (
+        f"问题：{question}\n\n证据：\n{context}\n\n"
+        "请只根据证据回答，控制在四句话以内，并在每句话末尾使用 [chunk-id] 引用证据。"
+    )
+    payload = {
+        "model": model,
+        "prompt": prompt,
+        "system": (
+            "你是严谨的计算机课程问答助手。只能依据给定证据回答。"
+            "不要编造证据中没有的内容。"
+        ),
+        "stream": False,
+        "options": {
+            "temperature": 0.1,
+            "num_predict": 256,
+        },
+    }
+    request = urllib.request.Request(
+        base_url,
+        data=json.dumps(payload, ensure_ascii=False).encode("utf-8"),
+        headers={"Content-Type": "application/json"},
+        method="POST",
+    )
+    try:
+        with urllib.request.urlopen(request, timeout=120) as response:
+            obj = json.loads(response.read().decode("utf-8"))
+    except (urllib.error.URLError, TimeoutError, json.JSONDecodeError):
+        return None
+    content = obj.get("response")
     return content.strip() if isinstance(content, str) and content.strip() else None
 
 
@@ -106,6 +147,14 @@ def print_llm_status() -> None:
         for model in status.models:
             print(f"- {model}")
     print("\nExpected environment for generation:")
+    print("\nNative Ollama generator:")
+    print('$env:CS_RAG_OLLAMA_URL="http://localhost:11434/api/generate"')
+    if status.models:
+        print(f'$env:CS_RAG_LLM_MODEL="{status.models[0]}"')
+    else:
+        print('$env:CS_RAG_LLM_MODEL="qwen-rag:0.5b"')
+    print('cs-rag ask "GraphRAG 为什么可能提高召回率但降低 Context Precision？" --generator ollama')
+    print("\nOpenAI-compatible generator:")
     print('$env:CS_RAG_LLM_BASE_URL="http://localhost:11434/v1/chat/completions"')
     if status.models:
         print(f'$env:CS_RAG_LLM_MODEL="{status.models[0]}"')

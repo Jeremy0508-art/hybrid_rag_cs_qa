@@ -5,7 +5,7 @@ import re
 from pathlib import Path
 
 from .data import load_qa
-from .llm import generate_openai_compatible_answer
+from .llm import generate_ollama_answer, generate_openai_compatible_answer
 from .schema import QAItem, SearchResult
 from .text import tokenize
 
@@ -49,6 +49,10 @@ def generate_extractive_answer(question: str, results: list[SearchResult], max_s
 
 
 def generate_answer(question: str, results: list[SearchResult], generator: str = "extractive") -> tuple[str, str]:
+    if generator == "ollama":
+        ollama_answer = generate_ollama_answer(question, results)
+        if ollama_answer:
+            return ollama_answer, "ollama"
     if generator in {"openai-compatible", "llm"}:
         llm_answer = generate_openai_compatible_answer(question, results)
         if llm_answer:
@@ -64,11 +68,14 @@ def evaluate_generation(
     method: str = "graph_pruned",
     top_k: int = 3,
     generator: str = "extractive",
+    limit: int | None = None,
 ) -> dict:
     from .pipeline import RagPipeline
 
     pipeline = RagPipeline(corpus_path, reranker_path=reranker_path)
     qa_items = load_qa(qa_path)
+    if limit is not None:
+        qa_items = qa_items[:limit]
     rows = []
     used_generators: set[str] = set()
     for item in qa_items:
@@ -83,6 +90,7 @@ def evaluate_generation(
         "generator": generator,
         "used_generators": sorted(used_generators),
         "num_questions": len(rows),
+        "limit": limit,
         "rows": rows,
     }
     out_path.parent.mkdir(parents=True, exist_ok=True)
@@ -164,6 +172,7 @@ def write_generation_report(report: dict, path: Path) -> None:
         f"- Used generators: `{', '.join(report['used_generators'])}`",
         f"- Top-k evidence: `{report['top_k']}`",
         f"- Questions: `{report['num_questions']}`",
+        f"- Limit: `{report['limit']}`",
         "",
         "## Metrics",
         "",

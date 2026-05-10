@@ -26,6 +26,12 @@ $env:CS_RAG_LLM_BASE_URL="http://localhost:11434/v1/chat/completions"
 $env:CS_RAG_LLM_MODEL="qwen2.5:7b-instruct"
 ```
 
+如果使用 Ollama 原生接口，只需要设置模型名：
+
+```powershell
+$env:CS_RAG_LLM_MODEL="qwen-rag:0.5b"
+```
+
 ## 2. 标准复现实验
 
 ```powershell
@@ -40,6 +46,8 @@ cs-rag check-llm
 如果已配置 LLM endpoint，可运行：
 
 ```powershell
+cs-rag ask "GraphRAG 为什么可能提高召回率但降低 Context Precision？" --generator ollama
+cs-rag evaluate-generation --generator ollama --limit 1 --out reports/generation_results_ollama_sample.json
 cs-rag ask "GraphRAG 为什么可能提高召回率但降低 Context Precision？" --generator openai-compatible
 cs-rag evaluate-generation --generator openai-compatible
 ```

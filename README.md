@@ -57,6 +57,16 @@ cs-rag evaluate
 
 默认生成器是 `extractive`，不需要 API。若你有本地 Ollama 或任意 OpenAI-compatible `/v1/chat/completions` 服务，可以这样切换：
 
+推荐优先使用 Ollama 原生接口：
+
+```powershell
+$env:CS_RAG_LLM_MODEL="qwen-rag:0.5b"
+cs-rag ask "GraphRAG 为什么可能提高召回率但降低 Context Precision？" --generator ollama
+cs-rag evaluate-generation --generator ollama --limit 1 --out reports/generation_results_ollama_sample.json
+```
+
+如果使用 Ollama 的 OpenAI-compatible 接口：
+
 ```powershell
 $env:CS_RAG_LLM_BASE_URL="http://localhost:11434/v1/chat/completions"
 $env:CS_RAG_LLM_MODEL="qwen2.5:7b-instruct"
@@ -64,7 +74,7 @@ cs-rag ask "GraphRAG 为什么可能提高召回率但降低 Context Precision�
 cs-rag evaluate-generation --generator openai-compatible
 ```
 
-如果未配置 endpoint 或调用失败，系统会自动回退到抽取式生成。
+如果未配置 endpoint 或调用失败，系统会自动回退到抽取式生成。0.5B 小模型适合验证流程，正式展示建议使用 3B/7B 级别中文指令模型。
 
 Ollama 安装与本地模型运行说明见 [OLLAMA.md](OLLAMA.md)。
 
