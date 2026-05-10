@@ -2,11 +2,11 @@
 
 ## 中文简历 Bullet
 
-独立完成面向计算机课程问答的 Hybrid Self-Reflective GraphRAG 系统，构建 34 个课程知识点与 100 条标注问答评测集；设计 BM25 + dense retrieval + RRF 融合检索、概念图谱扩展检索、hard-negative 重排序与证据压缩流程，将 Recall@5 从 0.7500 提升到 0.9367，并将 GraphRAG Context Precision 从 0.4140 提升到 0.6450；进一步设计 Faithfulness、Citation Accuracy、Citation Recall 等生成质量评测指标，完成完整实验报告与错误案例分析。
+独立完成面向计算机课程问答的 Hybrid Self-Reflective GraphRAG 系统，构建 34 个课程知识点与 100 条标注问答评测集；设计 BM25 + dense retrieval + RRF 融合检索、概念图谱扩展检索、hard-negative 重排序与证据压缩流程，将 Recall@5 从 0.7500 提升到 0.9367，并将 GraphRAG Context Precision 从 0.4140 提升到 0.6450；接入本地 Ollama Qwen2.5 3B 模型，设计 Faithfulness、Citation Accuracy、Citation Recall 等生成质量评测指标，完成真实 LLM 生成实验、完整实验报告与错误案例分析。
 
 ## English Resume Bullet
 
-Built a Hybrid Self-Reflective GraphRAG system for computer science course QA with 34 knowledge chunks and 100 annotated QA examples. Designed a BM25 + dense retrieval + RRF pipeline, concept-graph expansion, hard-negative reranking, and evidence pruning, improving Recall@5 from 0.7500 to 0.9367 and GraphRAG Context Precision from 0.4140 to 0.6450. Implemented retrieval and generation evaluation with MRR, NDCG, Faithfulness, Citation Accuracy, and Citation Recall.
+Built a Hybrid Self-Reflective GraphRAG system for computer science course QA with 34 knowledge chunks and 100 annotated QA examples. Designed a BM25 + dense retrieval + RRF pipeline, concept-graph expansion, hard-negative reranking, and evidence pruning, improving Recall@5 from 0.7500 to 0.9367 and GraphRAG Context Precision from 0.4140 to 0.6450. Integrated a local Ollama Qwen2.5 3B model and implemented retrieval/generation evaluation with MRR, NDCG, Faithfulness, Citation Accuracy, and Citation Recall.
 
 ## 30 秒项目介绍
 

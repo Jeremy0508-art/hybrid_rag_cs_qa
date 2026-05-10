@@ -183,7 +183,22 @@ Graph + Pruning RAG 在 Graph + Reflection RAG 的候选结果上进行证据压
 
 该结果说明，抽取式答案大多来自检索上下文，因而具有较好的忠实度；Citation Recall 与检索 Recall@5 接近，说明标注证据基本能被返回；Citation Accuracy 相比未剪枝 GraphRAG 明显提升，说明证据压缩减少了无关 citation。Answer Coverage 较低则反映了抽取式句子与人工标准答案在表达方式上的差异。
 
-## 9. 结论
+## 9. 本地 Ollama LLM 实验
+
+在抽取式生成 baseline 之外，项目进一步接入本地 Ollama 模型，验证“检索/重排序/证据压缩 + 真实 LLM 生成”的完整 RAG 链路。由于从 ModelScope 拉取的 Qwen2.5 GGUF 模型在 Ollama 中默认只有 `completion` 能力，本文为 0.5B 和 3B 模型分别构建了 Modelfile，补充 Qwen chat template，并通过 `--generator ollama` 调用 Ollama 原生 `/api/generate` 接口。
+
+本地 LLM 实验设置如下：检索方法使用 `graph_pruned`，Top-k 证据数为 3，评测前 10 条 QA 样本。
+
+| Model | Faithfulness | Answer Coverage | Citation Accuracy | Citation Recall |
+|---|---:|---:|---:|---:|
+| `qwen-rag:0.5b` | 0.7251 | 0.3151 | 0.6666 | 1.0000 |
+| `qwen-rag:3b` | 0.3378 | 0.2383 | 0.6666 | 1.0000 |
+
+从自动指标看，0.5B 模型的 Faithfulness 和 Answer Coverage 更高；但样例分析表明，它经常把多个检索片段直接拼接在一起，导致答案混入与问题无关的信息。3B 模型的词面重合指标较低，但回答更自然、更接近真实问答，并且在 prompt 约束后能够较稳定地原样引用证据 ID。该现象说明，RAG 生成评测不能只依赖词面重合指标，还需要结合人工样例分析，关注答案聚焦程度、引用格式和无关信息混入。
+
+该实验的意义在于：项目已经不只是离线检索评测，而是完成了可复现的本地 LLM 端到端问答链路；同时也观察到小模型、本地模型和自动指标之间的典型误差，为后续改进 prompt、替换更强模型和引入 LLM-as-judge 评测提供了依据。
+
+## 10. 结论
 
 本文完成了一个面向计算机课程问答的 Hybrid Self-Reflective GraphRAG 实验系统。实验表明：
 
@@ -193,13 +208,13 @@ Graph + Pruning RAG 在 Graph + Reflection RAG 的候选结果上进行证据压
 4. GraphRAG 同时降低 Context Precision，说明图扩展需要配合噪声抑制机制。
 5. Graph + Pruning RAG 在几乎保持召回率的同时显著提升 Context Precision 和 Citation Accuracy，说明证据压缩是降低 GraphRAG 噪声的有效策略。
 
-## 10. 不足与后续工作
+## 11. 不足与后续工作
 
 当前系统仍有几个限制。第一，虽然系统已经支持 sentence-transformers embedding，但当前报告中的主结果仍基于轻量 TF-IDF baseline；本地尝试加载 `BAAI/bge-small-zh-v1.5` 时受 HuggingFace 下载速度影响超时，后续应在网络稳定或已有本地模型缓存的环境下补充 BGE/E5 embedding 对比实验。第二，reranker 使用 Logistic Regression，表达能力有限，后续可以替换为 CrossEncoder 或 bge-reranker。第三，系统已支持 OpenAI-compatible LLM 后端，但当前主报告仍采用抽取式生成作为可复现 baseline，后续应补充真实 LLM 的生成质量对比。第四，当前评测集规模为 100 条，后续可继续扩展到 200 条，并加入更多跨章节、多证据问题。
 
 下一步计划是升级 embedding 与 reranker，并接入真实 LLM 生成答案，在检索指标之外继续评估回答忠实度和引用准确率。
 
-## 11. 展示材料
+## 12. 展示材料
 
 项目提供一键生成展示材料的命令：
 
