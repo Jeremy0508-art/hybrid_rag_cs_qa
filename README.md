@@ -65,6 +65,13 @@ cs-rag ask "GraphRAG 为什么可能提高召回率但降低 Context Precision�
 cs-rag evaluate-generation --generator ollama --limit 1 --out reports/generation_results_ollama_sample.json
 ```
 
+已验证的 3B 本地模型命令：
+
+```powershell
+$env:CS_RAG_LLM_MODEL="qwen-rag:3b"
+cs-rag evaluate-generation --generator ollama --limit 10 --out reports/generation_results_ollama_3b.json
+```
+
 如果使用 Ollama 的 OpenAI-compatible 接口：
 
 ```powershell
@@ -76,7 +83,7 @@ cs-rag evaluate-generation --generator openai-compatible
 
 如果未配置 endpoint 或调用失败，系统会自动回退到抽取式生成。0.5B 小模型适合验证流程，正式展示建议使用 3B/7B 级别中文指令模型。
 
-Ollama 安装与本地模型运行说明见 [OLLAMA.md](OLLAMA.md)。
+Ollama 安装、本地模型运行与 0.5B/3B 对比说明见 [OLLAMA.md](OLLAMA.md) 和 [reports/ollama_model_comparison.md](reports/ollama_model_comparison.md)。
 
 ## 目录结构
 

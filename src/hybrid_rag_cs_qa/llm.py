@@ -83,16 +83,20 @@ def generate_ollama_answer(question: str, results: list[SearchResult]) -> str | 
     model = os.getenv("CS_RAG_LLM_MODEL", "qwen-rag:0.5b")
     base_url = os.getenv("CS_RAG_OLLAMA_URL", "http://localhost:11434/api/generate")
     context = format_context(results)
+    allowed_ids = ", ".join(result.chunk.id for result in results)
     prompt = (
         f"问题：{question}\n\n证据：\n{context}\n\n"
-        "请只根据证据回答，控制在四句话以内，并在每句话末尾使用 [chunk-id] 引用证据。"
+        f"可用证据 ID：{allowed_ids}\n\n"
+        "请只根据证据回答，控制在四句话以内。"
+        "每句话末尾必须引用证据 ID，格式如 [os-进程与线程]。"
+        "只能从可用证据 ID 中选择，必须原样复制 ID，不要添加编号、前缀、后缀或 chunk-id。"
     )
     payload = {
         "model": model,
         "prompt": prompt,
         "system": (
             "你是严谨的计算机课程问答助手。只能依据给定证据回答。"
-            "不要编造证据中没有的内容。"
+            "不要编造证据中没有的内容，不要改写证据 ID。"
         ),
         "stream": False,
         "options": {

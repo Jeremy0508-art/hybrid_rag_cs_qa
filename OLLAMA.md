@@ -37,14 +37,16 @@ ollama pull qwen2.5:3b-instruct
 
 ```powershell
 ollama pull modelscope.cn/Qwen/Qwen2.5-0.5B-Instruct-GGUF
+ollama pull modelscope.cn/Qwen/Qwen2.5-3B-Instruct-GGUF
 ```
 
-这个 0.5B 模型很小，适合验证“RAG 检索 + 本地 LLM 生成”的完整链路，但生成质量不适合作为最终展示结论。正式写报告或面试展示时，优先换成 `qwen2.5:3b-instruct`、`qwen2.5:7b-instruct` 或同级别中文指令模型。
+0.5B 模型很小，适合验证“RAG 检索 + 本地 LLM 生成”的完整链路；3B 模型更适合做本地 LLM 展示。正式写报告或面试展示时，优先使用 3B/7B 级别中文指令模型。
 
-ModelScope 这个 GGUF 模型默认只有 `completion` 能力，因此项目里提供了一个 Ollama Modelfile，给它补上问答模板：
+ModelScope 这些 GGUF 模型默认只有 `completion` 能力，因此项目里提供了 Ollama Modelfile，给它们补上问答模板：
 
 ```powershell
 ollama create qwen-rag:0.5b -f ollama\Modelfile.qwen-rag
+ollama create qwen-rag:3b -f ollama\Modelfile.qwen-rag-3b
 ```
 
 ## 3. 检查服务
@@ -70,8 +72,15 @@ cs-rag evaluate-generation --generator ollama --limit 1 --out reports/generation
 如果你换成更强模型，只需要改模型名：
 
 ```powershell
-$env:CS_RAG_LLM_MODEL="qwen2.5:7b-instruct"
+$env:CS_RAG_LLM_MODEL="qwen-rag:3b"
 cs-rag ask "RAG 中重排序器为什么常用 hard negative 训练？" --generator ollama
+```
+
+当前 3B 小规模评测命令：
+
+```powershell
+$env:CS_RAG_LLM_MODEL="qwen-rag:3b"
+cs-rag evaluate-generation --generator ollama --limit 10 --out reports/generation_results_ollama_3b.json
 ```
 
 ## 5. 使用 OpenAI-compatible 接口
