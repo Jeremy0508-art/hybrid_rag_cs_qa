@@ -158,7 +158,7 @@ def write_final_showcase(path: Path) -> None:
 
 ## 项目一句话
 
-面向计算机课程问答，构建 Hybrid Self-Reflective GraphRAG 系统，通过混合检索、图扩展、hard-negative 重排序和证据压缩提升证据召回与引用准确率。
+面向计算机课程问答，构建 Hybrid Self-Reflective GraphRAG 系统，通过混合检索、概念图扩展、hard-negative 重排序、证据压缩和本地 Ollama LLM 生成，完成可复现的 RAG 检索与生成评测闭环。
 
 ## 核心结果
 
@@ -172,6 +172,16 @@ def write_final_showcase(path: Path) -> None:
 - Graph + Reflection RAG 将 Recall@5 提升到 0.9400，但 Context Precision 下降到 0.4140，说明图扩展带来噪声。
 - Graph + Pruning RAG 将 Context Precision 提升到 0.6450，同时保持 0.9367 的 Recall@5。
 - 生成评测中 Citation Accuracy 达到 0.6450，Citation Recall 达到 0.9367。
+- 本地 Ollama 实验接入 `qwen-rag:3b`，跑通真实 LLM 端到端问答；样例分析显示 3B 模型比 0.5B 更适合展示自然语言回答，但自动指标仍会偏好更贴近原文的抽取式答案。
+
+## 本地 LLM 实验
+
+| Model | Faithfulness | Answer Coverage | Citation Accuracy | Citation Recall |
+|---|---:|---:|---:|---:|
+| `qwen-rag:0.5b` | 0.7251 | 0.3151 | 0.6666 | 1.0000 |
+| `qwen-rag:3b` | 0.3378 | 0.2383 | 0.6666 | 1.0000 |
+
+解释：0.5B 的词面重合指标更高，但容易拼接无关片段；3B 的回答更自然，引用格式经 prompt 收紧后更稳定。这个结果说明项目同时做了自动指标评测和人工误差分析。
 
 ## 可复现命令
 
@@ -179,6 +189,10 @@ def write_final_showcase(path: Path) -> None:
 cs-rag train-reranker
 cs-rag evaluate
 cs-rag evaluate-generation
+
+$env:CS_RAG_LLM_MODEL="qwen-rag:3b"
+cs-rag evaluate-generation --generator ollama --limit 10 --out reports/generation_results_ollama_3b.json
+
 cs-rag build-showcase
 ```
 """,
@@ -192,7 +206,7 @@ def write_interview_cheatsheet(path: Path) -> None:
 
 ## 30 秒介绍
 
-我做了一个面向计算机课程问答的 Hybrid Self-Reflective GraphRAG 系统。项目包含 34 个课程知识点和 100 条标注问答，比较了 Naive RAG、Hybrid RAG、reranker、GraphRAG 和证据压缩版 GraphRAG。核心结果是：GraphRAG 明显提升召回，但会引入噪声；我进一步加入证据压缩，在几乎保持召回的同时把 Context Precision 从 0.4140 提升到 0.6450。
+我做了一个面向计算机课程问答的 Hybrid Self-Reflective GraphRAG 系统。项目包含 34 个课程知识点和 100 条标注问答，比较了 Naive RAG、Hybrid RAG、reranker、GraphRAG 和证据压缩版 GraphRAG。核心结果是：GraphRAG 明显提升召回，但会引入噪声；我进一步加入证据压缩，在几乎保持召回的同时把 Context Precision 从 0.4140 提升到 0.6450。最后我还接入了本地 Ollama Qwen2.5 3B 模型，完成真实 LLM 生成和引用评测。
 
 ## 为什么不是普通 RAG
 
@@ -213,9 +227,15 @@ A: GraphRAG 为了提高召回会返回相邻概念证据，部分证据主题�
 Q: 项目的创新点是什么？
 A: 不是单纯做 RAG demo，而是围绕课程问答构建了可复现实验闭环：混合检索、概念图扩展、hard-negative reranker、证据压缩、检索评测和生成评测。
 
+Q: 为什么 3B 模型的自动指标不一定比 0.5B 高？
+A: 当前 Faithfulness 和 Coverage 主要基于词面重合。0.5B 更容易直接拼接原文片段，所以指标可能更高，但答案会混入无关内容；3B 回答更自然，词面和标准答案不完全一致，因此指标偏低。这个现象说明我没有只看分数，还做了样例级误差分析。
+
+Q: 本地 Ollama 实验说明了什么？
+A: 它说明系统已经跑通真实 LLM 端到端链路，不只是抽取式 baseline。同时，0.5B/3B 对比暴露了小模型生成、citation 约束和自动指标之间的差异，为后续换更强模型、改 prompt 或引入 LLM-as-judge 提供依据。
+
 ## 简历 bullet
 
-独立完成面向计算机课程问答的 Hybrid Self-Reflective GraphRAG 系统，构建 34 个课程知识点与 100 条标注问答评测集；设计 BM25 + dense retrieval + RRF 融合检索、概念图谱扩展检索、hard-negative 重排序与证据压缩流程，将 Recall@5 从 0.7500 提升到 0.9367，并将 GraphRAG Context Precision 从 0.4140 提升到 0.6450。
+独立完成面向计算机课程问答的 Hybrid Self-Reflective GraphRAG 系统，构建 34 个课程知识点与 100 条标注问答评测集；设计 BM25 + dense retrieval + RRF 融合检索、概念图谱扩展检索、hard-negative 重排序与证据压缩流程，将 Recall@5 从 0.7500 提升到 0.9367，并将 GraphRAG Context Precision 从 0.4140 提升到 0.6450；接入本地 Ollama Qwen2.5 3B 模型，完成真实 LLM 生成、citation 约束与样例误差分析。
 """,
         encoding="utf-8",
     )

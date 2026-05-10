@@ -17,7 +17,7 @@ This analysis compares per-question retrieval behavior across methods.
   - naive: recall=0.0000, mrr=0.0000, retrieved=
   - graph: recall=1.0000, mrr=1.0000, retrieved=compiler-寄存器分配, compiler-中间代码与活跃变量
 - `q39` 快照读和事务隔离级别之间有什么关系？
-  - gold: db-隔离级别与并发异常, db-mvcc-与快照读
+  - gold: db-mvcc-与快照读, db-隔离级别与并发异常
   - naive: recall=0.0000, mrr=0.0000, retrieved=
   - graph: recall=1.0000, mrr=1.0000, retrieved=db-隔离级别与并发异常, db-mvcc-与快照读, db-事务与-acid
 - `q41` 从正则表达式到词法分析器通常经历什么转换链路？
@@ -103,7 +103,7 @@ No cases found.
   - hybrid: recall=1.0000, mrr=0.5000, retrieved=ai-rag-检索增强生成, net-ip-路由与-nat
   - rerank: recall=1.0000, mrr=1.0000, retrieved=net-ip-路由与-nat, ai-rag-检索增强生成
 - `q97` 普通 RAG、GraphRAG 和 Self-RAG 分别缓解什么问题？
-  - gold: ai-知识图谱与-graphrag, ai-self-rag-与反思检索, ai-rag-检索增强生成
+  - gold: ai-rag-检索增强生成, ai-知识图谱与-graphrag, ai-self-rag-与反思检索
   - hybrid: recall=1.0000, mrr=0.5000, retrieved=ai-rag-评测指标, ai-rag-检索增强生成, ai-self-rag-与反思检索, ai-知识图谱与-graphrag, ai-lora-与轻量微调
   - rerank: recall=1.0000, mrr=1.0000, retrieved=ai-rag-检索增强生成, ai-rag-评测指标, ai-self-rag-与反思检索, ai-知识图谱与-graphrag, ai-lora-与轻量微调
 
@@ -157,7 +157,7 @@ No cases found.
   - retrieved: compiler-中间代码与活跃变量
   - recall: 0.0000
 - `q47` 如果问题包含精确术语“BCNF”，稀疏检索为什么可能有优势？
-  - gold: db-范式与函数依赖, ai-bm25-与向量检索
+  - gold: ai-bm25-与向量检索, db-范式与函数依赖
   - retrieved: db-范式与函数依赖
   - recall: 0.5000
 - `q75` 变量未声明属于哪一类编译错误检查？
@@ -173,10 +173,10 @@ No cases found.
   - retrieved: 
   - recall: 0.0000
 - `q95` 符号表为什么会同时影响语义分析和后续代码生成？
-  - gold: compiler-中间代码与活跃变量, compiler-语义分析与类型检查
+  - gold: compiler-语义分析与类型检查, compiler-中间代码与活跃变量
   - retrieved: compiler-语义分析与类型检查, ai-rag-检索增强生成
   - recall: 0.5000
 - `q100` 为什么轻量微调在本项目中优先作用于检索模块而不是生成模块？
-  - gold: ai-重排序与-hard-negative, ai-lora-与轻量微调
+  - gold: ai-lora-与轻量微调, ai-重排序与-hard-negative
   - retrieved: 
   - recall: 0.0000

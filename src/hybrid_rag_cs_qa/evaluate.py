@@ -20,13 +20,14 @@ def evaluate(corpus_path: Path, qa_path: Path, reranker_path: Path, out_path: Pa
         for item in qa_items:
             results = pipeline.search(item.question, method=method, top_k=top_k)
             retrieved = [r.chunk.id for r in results]
-            gold = set(item.evidence_ids)
+            gold_ids = list(item.evidence_ids)
+            gold = set(gold_ids)
             rows.append(
                 {
                     "id": item.id,
                     "question": item.question,
                     "retrieved": retrieved,
-                    "gold": list(gold),
+                    "gold": gold_ids,
                     "recall": recall_at_k(retrieved, gold),
                     "mrr": mrr(retrieved, gold),
                     "ndcg": ndcg(retrieved, gold),
@@ -98,7 +99,7 @@ def write_markdown_report(report: dict, path: Path) -> None:
             "The error analysis file lists concrete cases for follow-up refinement.",
         ]
     )
-    path.write_text("\n".join(lines), encoding="utf-8")
+    path.write_text("\n".join(lines) + "\n", encoding="utf-8")
 
 
 def write_error_analysis(report: dict, path: Path) -> None:

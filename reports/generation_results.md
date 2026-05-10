@@ -5,6 +5,7 @@
 - Used generators: `extractive`
 - Top-k evidence: `3`
 - Questions: `100`
+- Limit: `None`
 
 ## Metrics
 

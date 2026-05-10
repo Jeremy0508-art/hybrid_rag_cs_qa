@@ -15,7 +15,7 @@ Graph + Reflection RAG 的 Recall@5 是 0.9400，说明图扩展有效；但 Con
 ## 可能被问到的问题
 
 Q: 为什么 hybrid 没明显超过 naive？
-A: 当前 dense retriever 还是 TF-IDF baseline，语料规模也比较小，BM25 和 TF-IDF 的信号有重合。后续接 BGE/E5 embedding 后，hybrid 的互补性会更明显。
+A: 当前 dense retriever 还是 TF-IDF baseline，语料规模也比较小，BM25 和 TF-IDF 的信号有重叠。后续接 BGE/E5 embedding 后，hybrid 的互补性会更明显。
 
 Q: 为什么 Citation Accuracy 不是特别高？
 A: GraphRAG 为了提高召回会返回相邻概念证据，部分证据主题相关但不直接支持答案。证据压缩已经把 Citation Accuracy 提升到 0.6450，后续可以用 CrossEncoder reranker 继续优化。
