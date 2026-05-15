@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from collections import Counter
 from pathlib import Path
+import re
 
 import joblib
 import numpy as np
@@ -21,7 +22,15 @@ class FeatureReranker:
             LogisticRegression(max_iter=1000, class_weight="balanced"),
         )
 
-    def featurize(self, question: str, chunk: Chunk, base_score: float = 0.0) -> list[float]:
+    ASPECTS = ("Foundations", "Mechanisms", "Tradeoffs", "Applications", "Evaluation")
+
+    def featurize(
+        self,
+        question: str,
+        chunk: Chunk,
+        base_score: float = 0.0,
+        candidate_chunks: list[Chunk] | None = None,
+    ) -> list[float]:
         q_tokens = tokenize(question)
         title_tokens = tokenize(chunk.title)
         c_tokens = tokenize(chunk.title + " " + chunk.text)
@@ -29,6 +38,20 @@ class FeatureReranker:
         c_counter = Counter(c_tokens)
         q_concepts = set(extract_concepts(question))
         overlap = set(q_tokens) & set(c_tokens)
+        candidate_chunks = candidate_chunks or []
+        same_course_candidates = sum(1 for candidate in candidate_chunks if candidate.course == chunk.course)
+        same_topic_candidates = sum(
+            1
+            for candidate in candidate_chunks
+            if candidate.course == chunk.course and topic_key(candidate.title) == topic_key(chunk.title)
+        )
+        sibling_present = any(
+            candidate.id != chunk.id
+            and candidate.course == chunk.course
+            and topic_key(candidate.title) == topic_key(chunk.title)
+            for candidate in candidate_chunks
+        )
+        multi_hop_query = is_multi_hop_question(question)
         return [
             base_score,
             cosine_from_counters(q_counter, c_counter),
@@ -39,6 +62,12 @@ class FeatureReranker:
             len(chunk.concepts),
             len(set(chunk.concepts) & q_concepts),
             1.0 if chunk.course in question else 0.0,
+            len(set(chunk.concepts) & q_concepts) / max(len(q_concepts), 1),
+            same_course_candidates / max(len(candidate_chunks), 1),
+            same_topic_candidates / max(len(candidate_chunks), 1),
+            1.0 if sibling_present else 0.0,
+            1.0 if multi_hop_query and sibling_present else 0.0,
+            1.0 if multi_hop_query and same_topic_candidates >= 2 else 0.0,
         ]
 
     def fit(self, qa_items: list[QAItem], chunks: list[Chunk]) -> "FeatureReranker":
@@ -46,7 +75,7 @@ class FeatureReranker:
         for item in qa_items:
             positives = set(item.evidence_ids)
             for chunk in chunks:
-                x.append(self.featurize(item.question, chunk))
+                x.append(self.featurize(item.question, chunk, candidate_chunks=chunks))
                 y.append(1 if chunk.id in positives else 0)
         self.model.fit(np.array(x), np.array(y))
         return self
@@ -62,16 +91,18 @@ class FeatureReranker:
         for item in qa_items:
             positives = set(item.evidence_ids)
             seen: set[str] = set()
-            for result in candidate_sets.get(item.id, []):
+            item_candidates = candidate_sets.get(item.id, [])
+            candidate_chunks = [result.chunk for result in item_candidates]
+            for result in item_candidates:
                 seen.add(result.chunk.id)
-                x.append(self.featurize(item.question, result.chunk, result.score))
+                x.append(self.featurize(item.question, result.chunk, result.score, candidate_chunks))
                 y.append(1 if result.chunk.id in positives else 0)
                 weights.append(5.0 if result.chunk.id in positives else 1.0)
 
             # Include missed positives so the model still sees the ideal evidence.
             for cid in positives - seen:
                 if cid in chunk_by_id:
-                    x.append(self.featurize(item.question, chunk_by_id[cid], 0.0))
+                    x.append(self.featurize(item.question, chunk_by_id[cid], 0.0, candidate_chunks))
                     y.append(1)
                     weights.append(5.0)
 
@@ -81,7 +112,8 @@ class FeatureReranker:
     def rerank(self, question: str, results: list[SearchResult], top_k: int = 5) -> list[SearchResult]:
         if not results:
             return []
-        features = np.array([self.featurize(question, r.chunk, r.score) for r in results])
+        candidate_chunks = [result.chunk for result in results]
+        features = np.array([self.featurize(question, r.chunk, r.score, candidate_chunks) for r in results])
         probs = self.model.predict_proba(features)[:, 1]
         reranked = [
             SearchResult(result.chunk, float(prob), result.source + "+rerank")
@@ -96,3 +128,16 @@ class FeatureReranker:
     @staticmethod
     def load(path: Path) -> "FeatureReranker":
         return joblib.load(path)
+
+
+def topic_key(title: str) -> str:
+    for aspect in FeatureReranker.ASPECTS:
+        suffix = f" {aspect}"
+        if title.endswith(suffix):
+            return title[: -len(suffix)]
+    return title
+
+
+def is_multi_hop_question(question: str) -> bool:
+    lower = question.lower()
+    return bool(re.search(r"\b(combine|combined|both|multi-hop|together)\b", lower))

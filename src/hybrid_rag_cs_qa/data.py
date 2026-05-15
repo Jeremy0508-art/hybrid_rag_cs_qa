@@ -21,10 +21,46 @@ CONCEPTS = (
     "幻觉", "忠实度", "Recall@k", "MRR", "NDCG", "LoRA", "对比学习", "hard negative",
 )
 
+ENGLISH_CONCEPTS = (
+    "process", "thread", "context switch", "scheduler", "mutex", "semaphore", "monitor",
+    "condition variable", "deadlock", "banker algorithm", "safe sequence",
+    "resource allocation", "virtual memory", "page table", "TLB", "LRU", "page fault",
+    "scheduling", "round robin", "priority", "starvation", "file system", "inode",
+    "journal", "crash recovery", "TCP", "UDP", "reliability", "flow control", "SYN",
+    "ACK", "three-way handshake", "four-way close", "congestion control", "slow start",
+    "AIMD", "fast retransmit", "DNS", "recursive resolver", "cache", "TTL", "HTTP",
+    "HTTPS", "TLS", "certificate", "IP", "routing", "NAT", "subnet",
+    "longest prefix match", "transaction", "ACID", "atomicity", "durability",
+    "isolation", "dirty read", "non-repeatable read", "phantom read", "serializable",
+    "B+ tree", "hash index", "range query", "selectivity", "MVCC", "snapshot",
+    "version", "visibility", "query optimizer", "join order", "cost model",
+    "predicate pushdown", "lexer", "parser", "token", "grammar", "LL", "LR", "FIRST",
+    "FOLLOW", "shift reduce", "semantic analysis", "type checking", "symbol table",
+    "scope", "IR", "three-address code", "data flow", "liveness", "register allocation",
+    "graph coloring", "spill", "interference graph", "BM25", "term frequency",
+    "inverse document frequency", "sparse retrieval", "embedding", "vector search",
+    "semantic similarity", "contrastive learning", "hybrid retrieval", "RRF",
+    "rank fusion", "candidate generation", "reranker", "hard negative", "cross encoder",
+    "feature model", "GraphRAG", "knowledge graph", "concept graph", "multi-hop",
+    "RAPTOR", "summary tree", "recursive summarization", "hierarchical retrieval",
+    "Self-RAG", "faithfulness", "citation", "reflection", "Recall@k", "MRR", "NDCG",
+    "context precision", "citation accuracy",
+)
+
+ALL_CONCEPTS = tuple(dict.fromkeys(CONCEPTS + ENGLISH_CONCEPTS))
+
 
 def extract_concepts(text: str) -> tuple[str, ...]:
     lower = text.lower()
-    return tuple(c for c in CONCEPTS if c.lower() in lower)
+    return tuple(c for c in ALL_CONCEPTS if _concept_in_text(c, lower))
+
+
+def _concept_in_text(concept: str, lower_text: str) -> bool:
+    lower_concept = concept.lower()
+    if re.fullmatch(r"[a-z0-9+#.-]+(?:\s+[a-z0-9+#.-]+)*", lower_concept):
+        pattern = r"(?<![a-z0-9+#.-])" + re.escape(lower_concept) + r"(?![a-z0-9+#.-])"
+        return re.search(pattern, lower_text) is not None
+    return lower_concept in lower_text
 
 
 def load_chunks(path: Path) -> list[Chunk]:
@@ -65,6 +101,11 @@ def load_qa(path: Path) -> list[QAItem]:
                 evidence_ids=tuple(obj["evidence_ids"]),
                 difficulty=obj.get("difficulty", "medium"),
                 question_type=obj.get("type", "unknown"),
+                topic=obj.get("topic", "unknown"),
+                subtopic=obj.get("subtopic", "unknown"),
+                expected_concepts=tuple(obj.get("expected_concepts", [])),
+                requires_multi_hop=bool(obj.get("requires_multi_hop", False)),
+                answer_style=obj.get("answer_style", "unknown"),
             )
         )
     return items

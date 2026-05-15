@@ -5,8 +5,10 @@ from pathlib import Path
 from .data import extract_concepts, load_chunks
 from .graph_rag import GraphExpander
 from .generation import generate_answer
-from .reranker import FeatureReranker
+from .reranker import FeatureReranker, is_multi_hop_question
 from .retrievers import BM25Retriever, DenseRetriever, rrf_fuse
+from .raptor_builder import RaptorTreeBuilder
+from .raptor_retriever import RaptorRetriever
 from .schema import SearchResult
 
 
@@ -16,9 +18,11 @@ class RagPipeline:
         self.bm25 = BM25Retriever(self.chunks)
         self.dense = DenseRetriever(self.chunks)
         self.graph = GraphExpander(self.chunks)
+        self.raptor_tree = RaptorTreeBuilder().build(self.chunks)
+        self.raptor = RaptorRetriever(self.chunks, self.raptor_tree)
         self.reranker = FeatureReranker.load(reranker_path) if reranker_path and reranker_path.exists() else None
 
-    def search(self, question: str, method: str, top_k: int = 5) -> list[SearchResult]:
+    def search(self, question: str, method: str = "graph_raptor_pruned", top_k: int = 5) -> list[SearchResult]:
         candidate_k = max(top_k * 4, 10)
         if method == "naive":
             return self.dense.search(question, top_k)
@@ -40,12 +44,31 @@ class RagPipeline:
             candidates = self._graph_candidates(question, candidate_k)
             reranked = self.reranker.rerank(question, candidates, candidate_k) if self.reranker else candidates
             return self._compress_evidence(question, reranked, max_results=min(3, top_k))
+        if method == "raptor":
+            return self.raptor.search(question, top_k=top_k, mode="collapsed")
+        if method == "raptor_topdown":
+            return self.raptor.search(question, top_k=top_k, mode="topdown")
+        if method == "hybrid_raptor":
+            return rrf_fuse(
+                [
+                    self.bm25.search(question, candidate_k),
+                    self.dense.search(question, candidate_k),
+                    self.raptor.search(question, top_k=candidate_k, mode="collapsed"),
+                ],
+                top_k=top_k,
+            )
+        if method == "graph_raptor_pruned":
+            candidates = self._graph_raptor_candidates(question, candidate_k)
+            if is_multi_hop_question(question):
+                return self._compress_evidence(question, candidates, max_results=min(4, top_k))
+            reranked = self.reranker.rerank(question, candidates, candidate_k) if self.reranker else candidates
+            return self._compress_evidence(question, reranked, max_results=min(3, top_k))
         raise ValueError(f"Unknown method: {method}")
 
     def answer_extractive(
         self,
         question: str,
-        method: str = "graph_pruned",
+        method: str = "graph_raptor_pruned",
         generator: str = "extractive",
     ) -> dict[str, object]:
         results = self.search(question, method=method, top_k=3)
@@ -78,6 +101,29 @@ class RagPipeline:
             expanded_question = question + " " + " ".join(extract_concepts(question))
             candidates = rrf_fuse(
                 [candidates, self.graph.expand(expanded_question, candidate_k)],
+                top_k=candidate_k,
+            )
+        return candidates
+
+    def _graph_raptor_candidates(self, question: str, candidate_k: int) -> list[SearchResult]:
+        candidates = rrf_fuse(
+            [
+                self.bm25.search(question, candidate_k),
+                self.dense.search(question, candidate_k),
+                self.graph.expand(question, candidate_k),
+                self.raptor.search(question, top_k=candidate_k, mode="collapsed"),
+                self.raptor.search(question, top_k=candidate_k, mode="topdown"),
+            ],
+            top_k=candidate_k,
+        )
+        if self._needs_more_evidence(question, candidates):
+            expanded_question = question + " " + " ".join(extract_concepts(question))
+            candidates = rrf_fuse(
+                [
+                    candidates,
+                    self.graph.expand(expanded_question, candidate_k),
+                    self.raptor.search(expanded_question, top_k=candidate_k, mode="topdown"),
+                ],
                 top_k=candidate_k,
             )
         return candidates

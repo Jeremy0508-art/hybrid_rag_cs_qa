@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "hybrid-rag-cs-qa"
 version = "0.1.0"
-description = "Hybrid GraphRAG and reranking experiments for computer science course QA"
+description = "Hybrid GraphRAG and RAPTOR experiments for computer science course QA"
 readme = "README.md"
 requires-python = ">=3.10"
 dependencies = [
@@ -24,3 +24,6 @@ cs-rag = "hybrid_rag_cs_qa.cli:main"
 
 [tool.setuptools.packages.find]
 where = ["src"]
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]

@@ -1,6 +1,6 @@
 # Runbook
 
-这份运行手册用于复现实验、更新报告和准备展示材料。
+这份运行手册用于复现扩展数据集、检索评估、生成评估和展示材料。
 
 ## 1. Environment
 
@@ -28,10 +28,12 @@ $env:CS_RAG_EMBEDDING_MODEL="BAAI/bge-small-zh-v1.5"
 ## 2. Standard Reproduction
 
 ```powershell
+cs-rag build-expanded-dataset
 cs-rag prepare
 cs-rag train-reranker
+cs-rag build-raptor-tree
 cs-rag evaluate
-cs-rag evaluate-generation
+cs-rag evaluate-generation --method graph_raptor_pruned --top-k 3 --adaptive-top-k --multi-hop-top-k 4
 cs-rag build-showcase
 pytest -q
 ```
@@ -40,16 +42,34 @@ pytest -q
 
 | File | Purpose |
 |---|---|
-| `reports/experiment_results.md` | 检索指标 |
+| `data/raw/cs_courses_expanded.md` | 扩展后的课程语料 |
+| `data/qa/eval_qa_expanded.jsonl` | 扩展后的 QA 评估集 |
+| `artifacts/raptor_tree.json` | RAPTOR summary tree |
+| `reports/experiment_results.md` | 检索指标和分组分析 |
 | `reports/error_analysis.md` | 错误案例 |
-| `reports/generation_results.md` | 抽取式生成评测 |
+| `reports/generation_results.md` | 生成指标和分组分析 |
+| `reports/generation_results_*_adaptive.md` | 不同方法的生成对比实验 |
 | `reports/final_showcase.md` | 最终展示页 |
 | `reports/interview_cheatsheet.md` | 面试速查 |
+| `reports/artifact_index.md` | 交付文件索引 |
+| `reports/submission_checklist.md` | 提交和打包检查清单 |
 | `reports/figures/*.svg` | 可视化图表 |
 
-## 3. Local Ollama LLM
+## 3. Key Numbers
 
-拉取 3B 模型并创建项目专用模板：
+| Method | Recall@5 | MRR | NDCG | Context Precision |
+|---|---:|---:|---:|---:|
+| naive | 0.9667 | 0.9817 | 0.9638 | 0.2667 |
+| hybrid_raptor | 0.9813 | 0.9822 | 0.9723 | 0.2725 |
+| graph_raptor_pruned | 0.9667 | 0.9833 | 0.9663 | 0.3864 |
+
+| Generator Setup | Faithfulness | Answer Coverage | Citation Accuracy | Citation Recall |
+|---|---:|---:|---:|---:|
+| `graph_raptor_pruned`, adaptive top-k | 0.9909 | 0.9814 | 0.4065 | 0.9687 |
+
+## 4. Local Ollama LLM
+
+拉取 3B 模型并创建项目专用模型：
 
 ```powershell
 ollama pull modelscope.cn/Qwen/Qwen2.5-3B-Instruct-GGUF
@@ -60,51 +80,23 @@ ollama create qwen-rag:3b -f ollama\Modelfile.qwen-rag-3b
 
 ```powershell
 $env:CS_RAG_LLM_MODEL="qwen-rag:3b"
-cs-rag ask "GraphRAG 为什么可能提高召回率但降低 Context Precision？" --generator ollama
+cs-rag ask "Why can GraphRAG improve recall but reduce context precision?" --generator ollama
 ```
 
-运行 10 条小规模评测：
+## 5. Demo Order
 
-```powershell
-$env:CS_RAG_LLM_MODEL="qwen-rag:3b"
-cs-rag evaluate-generation --generator ollama --limit 10 --out reports/generation_results_ollama_3b.json
-```
-
-对比报告：
-
-| File | Purpose |
-|---|---|
-| `reports/generation_results_ollama_0_5b.md` | 0.5B 本地模型样例 |
-| `reports/generation_results_ollama_3b.md` | 3B 本地模型样例 |
-| `reports/ollama_model_comparison.md` | 0.5B/3B 对比解释 |
-
-## 4. Demo Order
-
-1. 讲问题：普通 RAG 在课程问答中会漏召回精确术语、多跳概念和跨章节关系。
-2. 讲方法：Hybrid retrieval、GraphRAG、hard-negative reranker、evidence pruning。
-3. 讲结果：GraphRAG 提升 Recall，Graph + Pruning 提升 Context Precision。
-4. 讲生成：抽取式 baseline 稳定可复现，本地 Ollama 3B 跑通真实 LLM 链路。
-5. 讲误差：0.5B 自动指标高但容易拼接无关片段；3B 更自然但词面指标偏低。
-6. 讲后续：BGE/E5 embedding、CrossEncoder reranker、更强 7B LLM、LLM-as-judge。
-
-## 5. Key Numbers
-
-| Method | Recall@5 | MRR | NDCG | Context Precision |
-|---|---:|---:|---:|---:|
-| naive | 0.7500 | 0.7633 | 0.7512 | 0.5905 |
-| graph_reflect | 0.9400 | 0.9183 | 0.9193 | 0.4140 |
-| graph_pruned | 0.9367 | 0.9183 | 0.9173 | 0.6450 |
-
-| Generator | Faithfulness | Citation Accuracy | Citation Recall |
-|---|---:|---:|---:|
-| extractive baseline | 0.7558 | 0.6450 | 0.9367 |
-| Ollama `qwen-rag:3b`, 10-sample | 0.3378 | 0.6666 | 1.0000 |
+1. 讲问题：普通 chunk 相似度很难同时处理术语精确匹配、改写问法、多跳线索和引用质量。
+2. 讲数据：项目已扩展到 150 个课程文档和 750 条 QA，并加入分组标签。
+3. 讲方法：BM25 + dense、GraphRAG、RAPTOR tree、Hybrid RAPTOR、evidence pruning。
+4. 讲结果：`hybrid_raptor` 取得最高整体 Recall@5，`graph_raptor_pruned` 更适合作为生成入口。
+5. 讲生成：adaptive top-k 为多跳问题提供更多证据预算，同时保留压缩后的上下文质量。
+6. 讲后续：更强 embedding、CrossEncoder reranker、LLM summarizer、LLM-as-judge。
 
 ## 6. Final Checklist
 
 - `pytest -q` passes.
-- `git status --short` has no unexpected files.
-- README contains the key results and reproduction commands.
-- `RESUME.md` has the final Chinese and English resume bullets.
+- `cs-rag evaluate` 和 `cs-rag evaluate-generation` 已重新生成报告。
+- README contains the current key results and reproduction commands.
+- `RESUME.md` has Chinese and English resume bullets.
 - `reports/interview_cheatsheet.md` can support a 30-second and 2-minute explanation.
-- `reports/research_report_template.md` contains retrieval, generation, Ollama, error analysis and limitations.
+- `reports/research_report_template.md` matches the expanded RAPTOR version.

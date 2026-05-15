@@ -4,179 +4,258 @@ This analysis compares per-question retrieval behavior across methods.
 
 ## GraphRAG Improvements Over Naive
 
-- `q1` 为什么线程切换通常比进程切换开销更低？
-  - gold: os-进程与线程
-  - naive: recall=0.0000, mrr=0.0000, retrieved=
-  - graph: recall=1.0000, mrr=1.0000, retrieved=os-进程与线程, os-cpu-调度算法, os-虚拟内存与页面置换, os-死锁与银行家算法, os-同步互斥与信号量
-- `q2` 互斥锁、信号量和管程分别适合解决什么并发问题？
-  - gold: os-同步互斥与信号量
-  - naive: recall=0.0000, mrr=0.0000, retrieved=ai-rag-检索增强生成
-  - graph: recall=1.0000, mrr=1.0000, retrieved=os-同步互斥与信号量, ai-rag-检索增强生成, os-死锁与银行家算法, os-进程与线程, os-cpu-调度算法
-- `q27` 图着色寄存器分配中为什么活跃区间冲突的变量不能使用同一寄存器？
-  - gold: compiler-寄存器分配
-  - naive: recall=0.0000, mrr=0.0000, retrieved=
-  - graph: recall=1.0000, mrr=1.0000, retrieved=compiler-寄存器分配, compiler-中间代码与活跃变量
-- `q39` 快照读和事务隔离级别之间有什么关系？
-  - gold: db-mvcc-与快照读, db-隔离级别与并发异常
-  - naive: recall=0.0000, mrr=0.0000, retrieved=
-  - graph: recall=1.0000, mrr=1.0000, retrieved=db-隔离级别与并发异常, db-mvcc-与快照读, db-事务与-acid
-- `q41` 从正则表达式到词法分析器通常经历什么转换链路？
-  - gold: compiler-正则表达式-nfa-与-dfa
-  - naive: recall=0.0000, mrr=0.0000, retrieved=
-  - graph: recall=1.0000, mrr=1.0000, retrieved=compiler-正则表达式-nfa-与-dfa, compiler-词法分析与语法分析, compiler-lr分析
-- `q48` 为什么日志文件系统有助于崩溃恢复？
-  - gold: os-文件系统与-inode
-  - naive: recall=0.0000, mrr=0.0000, retrieved=
-  - graph: recall=1.0000, mrr=1.0000, retrieved=os-文件系统与-inode
-- `q51` 进程拥有独立地址空间这一点会如何影响上下文切换成本？
-  - gold: os-进程与线程
-  - naive: recall=0.0000, mrr=0.0000, retrieved=ai-重排序与-hard-negative
-  - graph: recall=1.0000, mrr=1.0000, retrieved=os-进程与线程, os-cpu-调度算法, os-虚拟内存与页面置换, os-死锁与银行家算法, ai-重排序与-hard-negative
-- `q52` 条件变量为什么通常和管程一起出现？
-  - gold: os-同步互斥与信号量
-  - naive: recall=0.0000, mrr=0.0000, retrieved=
-  - graph: recall=1.0000, mrr=1.0000, retrieved=os-同步互斥与信号量, os-进程与线程, net-三次握手与四次挥手, os-死锁与银行家算法
-- `q53` 破坏死锁的循环等待条件可以怎样避免死锁？
-  - gold: os-死锁与银行家算法
-  - naive: recall=0.0000, mrr=0.0000, retrieved=
-  - graph: recall=1.0000, mrr=1.0000, retrieved=os-死锁与银行家算法, os-进程与线程, os-cpu-调度算法, os-同步互斥与信号量, os-虚拟内存与页面置换
-- `q64` 路由聚合和子网划分之间有什么关系？
-  - gold: net-子网划分
-  - naive: recall=0.0000, mrr=0.0000, retrieved=
-  - graph: recall=1.0000, mrr=1.0000, retrieved=net-子网划分, net-ip-路由与-nat, net-dns-解析过程
+- `expanded-q005-5` Why would the evaluation perspective on process and the foundations perspective on mutex need to be combined when answering a grounded systems question?
+  - gold: operating-systems-process-and-thread-management-evaluation, operating-systems-synchronization-and-mutual-exclusion-foundations
+  - naive: recall=0.5000, mrr=0.5000, retrieved=operating-systems-process-and-thread-management-foundations, operating-systems-process-and-thread-management-evaluation, operating-systems-process-and-thread-management-mechanisms, operating-systems-process-and-thread-management-applications, operating-systems-process-and-thread-management-tradeoffs
+  - graph: recall=1.0000, mrr=0.5000, retrieved=operating-systems-process-and-thread-management-foundations, operating-systems-synchronization-and-mutual-exclusion-foundations, operating-systems-process-and-thread-management-evaluation, operating-systems-synchronization-and-mutual-exclusion-evaluation, operating-systems-virtual-memory-and-page-replacement-foundations
+- `expanded-q015-4` Why might Deadlock and Resource Allocation Evaluation and Virtual Memory and Page Replacement Foundations both matter in a RAG-style system?
+  - gold: operating-systems-deadlock-and-resource-allocation-evaluation, operating-systems-virtual-memory-and-page-replacement-foundations
+  - naive: recall=0.5000, mrr=1.0000, retrieved=operating-systems-virtual-memory-and-page-replacement-foundations, operating-systems-virtual-memory-and-page-replacement-evaluation, operating-systems-virtual-memory-and-page-replacement-tradeoffs, operating-systems-virtual-memory-and-page-replacement-applications, operating-systems-virtual-memory-and-page-replacement-mechanisms
+  - graph: recall=1.0000, mrr=0.5000, retrieved=operating-systems-virtual-memory-and-page-replacement-evaluation, operating-systems-virtual-memory-and-page-replacement-foundations, operating-systems-deadlock-and-resource-allocation-evaluation, operating-systems-deadlock-and-resource-allocation-foundations, operating-systems-virtual-memory-and-page-replacement-mechanisms
+- `expanded-q020-5` Why would the evaluation perspective on virtual memory and the foundations perspective on scheduling need to be combined when answering a grounded systems question?
+  - gold: operating-systems-virtual-memory-and-page-replacement-evaluation, operating-systems-cpu-scheduling-foundations
+  - naive: recall=0.5000, mrr=0.5000, retrieved=operating-systems-virtual-memory-and-page-replacement-foundations, operating-systems-virtual-memory-and-page-replacement-evaluation, operating-systems-virtual-memory-and-page-replacement-mechanisms, operating-systems-virtual-memory-and-page-replacement-applications, operating-systems-virtual-memory-and-page-replacement-tradeoffs
+  - graph: recall=1.0000, mrr=0.5000, retrieved=operating-systems-virtual-memory-and-page-replacement-foundations, operating-systems-virtual-memory-and-page-replacement-evaluation, operating-systems-cpu-scheduling-evaluation, operating-systems-cpu-scheduling-foundations, operating-systems-process-and-thread-management-foundations
+- `expanded-q025-4` Why might CPU Scheduling Evaluation and File Systems and Journaling Foundations both matter in a RAG-style system?
+  - gold: operating-systems-cpu-scheduling-evaluation, operating-systems-file-systems-and-journaling-foundations
+  - naive: recall=0.5000, mrr=1.0000, retrieved=operating-systems-file-systems-and-journaling-foundations, operating-systems-file-systems-and-journaling-evaluation, operating-systems-file-systems-and-journaling-tradeoffs, operating-systems-file-systems-and-journaling-applications, operating-systems-file-systems-and-journaling-mechanisms
+  - graph: recall=1.0000, mrr=1.0000, retrieved=operating-systems-cpu-scheduling-evaluation, operating-systems-file-systems-and-journaling-evaluation, operating-systems-file-systems-and-journaling-foundations, operating-systems-cpu-scheduling-foundations, operating-systems-cpu-scheduling-mechanisms
+- `expanded-q025-5` Why would the evaluation perspective on scheduling and the foundations perspective on file system need to be combined when answering a grounded systems question?
+  - gold: operating-systems-cpu-scheduling-evaluation, operating-systems-file-systems-and-journaling-foundations
+  - naive: recall=0.5000, mrr=1.0000, retrieved=operating-systems-file-systems-and-journaling-foundations, operating-systems-file-systems-and-journaling-evaluation, operating-systems-file-systems-and-journaling-mechanisms, operating-systems-file-systems-and-journaling-applications, operating-systems-file-systems-and-journaling-tradeoffs
+  - graph: recall=1.0000, mrr=1.0000, retrieved=operating-systems-file-systems-and-journaling-foundations, operating-systems-file-systems-and-journaling-evaluation, operating-systems-cpu-scheduling-evaluation, operating-systems-cpu-scheduling-foundations, operating-systems-file-systems-and-journaling-tradeoffs
+- `expanded-q035-4` Why might TCP and UDP Transport Evaluation and TCP Handshake and Connection Teardown Foundations both matter in a RAG-style system?
+  - gold: computer-networks-tcp-and-udp-transport-evaluation, computer-networks-tcp-handshake-and-connection-teardown-foundations
+  - naive: recall=0.5000, mrr=1.0000, retrieved=computer-networks-tcp-handshake-and-connection-teardown-foundations, computer-networks-tcp-handshake-and-connection-teardown-evaluation, computer-networks-tcp-handshake-and-connection-teardown-tradeoffs, computer-networks-tcp-handshake-and-connection-teardown-applications, computer-networks-tcp-handshake-and-connection-teardown-mechanisms
+  - graph: recall=1.0000, mrr=1.0000, retrieved=computer-networks-tcp-handshake-and-connection-teardown-foundations, computer-networks-tcp-handshake-and-connection-teardown-evaluation, computer-networks-tcp-and-udp-transport-evaluation, computer-networks-tcp-and-udp-transport-foundations, computer-networks-tcp-handshake-and-connection-teardown-mechanisms
+- `expanded-q035-5` Why would the evaluation perspective on TCP and the foundations perspective on SYN need to be combined when answering a grounded systems question?
+  - gold: computer-networks-tcp-and-udp-transport-evaluation, computer-networks-tcp-handshake-and-connection-teardown-foundations
+  - naive: recall=0.5000, mrr=0.5000, retrieved=computer-networks-tcp-and-udp-transport-foundations, computer-networks-tcp-and-udp-transport-evaluation, computer-networks-tcp-and-udp-transport-mechanisms, computer-networks-tcp-and-udp-transport-applications, computer-networks-tcp-and-udp-transport-tradeoffs
+  - graph: recall=1.0000, mrr=0.3333, retrieved=information-retrieval-bm25-and-sparse-retrieval-evaluation, information-retrieval-bm25-and-sparse-retrieval-foundations, computer-networks-tcp-and-udp-transport-evaluation, computer-networks-tcp-handshake-and-connection-teardown-foundations, computer-networks-tcp-handshake-and-connection-teardown-evaluation
+- `expanded-q040-4` Why might TCP Handshake and Connection Teardown Evaluation and Congestion Control Foundations both matter in a RAG-style system?
+  - gold: computer-networks-tcp-handshake-and-connection-teardown-evaluation, computer-networks-congestion-control-foundations
+  - naive: recall=0.5000, mrr=1.0000, retrieved=computer-networks-tcp-handshake-and-connection-teardown-evaluation, computer-networks-tcp-handshake-and-connection-teardown-foundations, computer-networks-tcp-handshake-and-connection-teardown-tradeoffs, computer-networks-tcp-handshake-and-connection-teardown-applications, computer-networks-tcp-handshake-and-connection-teardown-mechanisms
+  - graph: recall=1.0000, mrr=0.5000, retrieved=computer-networks-tcp-handshake-and-connection-teardown-foundations, computer-networks-tcp-handshake-and-connection-teardown-evaluation, computer-networks-tcp-handshake-and-connection-teardown-mechanisms, computer-networks-congestion-control-foundations, computer-networks-congestion-control-evaluation
+- `expanded-q045-5` Why would the evaluation perspective on congestion control and the foundations perspective on DNS need to be combined when answering a grounded systems question?
+  - gold: computer-networks-congestion-control-evaluation, computer-networks-dns-resolution-foundations
+  - naive: recall=0.5000, mrr=0.5000, retrieved=computer-networks-congestion-control-foundations, computer-networks-congestion-control-evaluation, computer-networks-congestion-control-mechanisms, computer-networks-congestion-control-applications, computer-networks-congestion-control-tradeoffs
+  - graph: recall=1.0000, mrr=1.0000, retrieved=computer-networks-congestion-control-evaluation, computer-networks-tcp-and-udp-transport-evaluation, computer-networks-congestion-control-foundations, computer-networks-dns-resolution-evaluation, computer-networks-dns-resolution-foundations
+- `expanded-q050-4` Why might DNS Resolution Evaluation and HTTP HTTPS and TLS Foundations both matter in a RAG-style system?
+  - gold: computer-networks-dns-resolution-evaluation, computer-networks-http-https-and-tls-foundations
+  - naive: recall=0.5000, mrr=1.0000, retrieved=computer-networks-http-https-and-tls-foundations, computer-networks-http-https-and-tls-evaluation, computer-networks-http-https-and-tls-tradeoffs, computer-networks-http-https-and-tls-applications, computer-networks-http-https-and-tls-mechanisms
+  - graph: recall=1.0000, mrr=1.0000, retrieved=computer-networks-http-https-and-tls-foundations, computer-networks-http-https-and-tls-evaluation, computer-networks-dns-resolution-evaluation, computer-networks-dns-resolution-foundations, computer-networks-http-https-and-tls-mechanisms
 
 ## GraphRAG Regressions
 
-No cases found.
+- `expanded-q004-5` Why would the applications perspective on process and the evaluation perspective on process need to be combined when answering a grounded systems question?
+  - gold: operating-systems-process-and-thread-management-applications, operating-systems-process-and-thread-management-evaluation
+  - naive: recall=1.0000, mrr=1.0000, retrieved=operating-systems-process-and-thread-management-applications, operating-systems-process-and-thread-management-evaluation, operating-systems-process-and-thread-management-mechanisms, operating-systems-process-and-thread-management-foundations, operating-systems-process-and-thread-management-tradeoffs
+  - graph: recall=0.5000, mrr=0.2000, retrieved=operating-systems-virtual-memory-and-page-replacement-applications, operating-systems-virtual-memory-and-page-replacement-evaluation, databases-query-optimization-applications, databases-query-optimization-evaluation, operating-systems-process-and-thread-management-applications
+- `expanded-q010-5` Why would the evaluation perspective on mutex and the foundations perspective on deadlock need to be combined when answering a grounded systems question?
+  - gold: operating-systems-synchronization-and-mutual-exclusion-evaluation, operating-systems-deadlock-and-resource-allocation-foundations
+  - naive: recall=1.0000, mrr=1.0000, retrieved=operating-systems-deadlock-and-resource-allocation-foundations, operating-systems-deadlock-and-resource-allocation-evaluation, operating-systems-synchronization-and-mutual-exclusion-foundations, operating-systems-deadlock-and-resource-allocation-mechanisms, operating-systems-synchronization-and-mutual-exclusion-evaluation
+  - graph: recall=0.5000, mrr=0.5000, retrieved=operating-systems-synchronization-and-mutual-exclusion-foundations, operating-systems-synchronization-and-mutual-exclusion-evaluation, operating-systems-deadlock-and-resource-allocation-evaluation, operating-systems-synchronization-and-mutual-exclusion-tradeoffs, operating-systems-synchronization-and-mutual-exclusion-applications
+- `expanded-q012-5` Why would the mechanisms perspective on deadlock and the tradeoffs perspective on deadlock need to be combined when answering a grounded systems question?
+  - gold: operating-systems-deadlock-and-resource-allocation-mechanisms, operating-systems-deadlock-and-resource-allocation-tradeoffs
+  - naive: recall=1.0000, mrr=1.0000, retrieved=operating-systems-deadlock-and-resource-allocation-mechanisms, operating-systems-deadlock-and-resource-allocation-tradeoffs, operating-systems-deadlock-and-resource-allocation-foundations, operating-systems-deadlock-and-resource-allocation-applications, operating-systems-deadlock-and-resource-allocation-evaluation
+  - graph: recall=0.5000, mrr=0.2000, retrieved=rag-systems-graphrag-retrieval-tradeoffs, operating-systems-synchronization-and-mutual-exclusion-tradeoffs, rag-systems-graphrag-retrieval-mechanisms, operating-systems-synchronization-and-mutual-exclusion-mechanisms, operating-systems-deadlock-and-resource-allocation-tradeoffs
+- `expanded-q013-5` Why would the tradeoffs perspective on deadlock and the applications perspective on deadlock need to be combined when answering a grounded systems question?
+  - gold: operating-systems-deadlock-and-resource-allocation-tradeoffs, operating-systems-deadlock-and-resource-allocation-applications
+  - naive: recall=1.0000, mrr=1.0000, retrieved=operating-systems-deadlock-and-resource-allocation-applications, operating-systems-deadlock-and-resource-allocation-tradeoffs, operating-systems-deadlock-and-resource-allocation-mechanisms, operating-systems-deadlock-and-resource-allocation-foundations, operating-systems-deadlock-and-resource-allocation-evaluation
+  - graph: recall=0.5000, mrr=0.2000, retrieved=rag-systems-graphrag-retrieval-tradeoffs, operating-systems-synchronization-and-mutual-exclusion-tradeoffs, rag-systems-graphrag-retrieval-applications, operating-systems-synchronization-and-mutual-exclusion-applications, operating-systems-deadlock-and-resource-allocation-applications
+- `expanded-q031-5` Why would the foundations perspective on TCP and the mechanisms perspective on TCP need to be combined when answering a grounded systems question?
+  - gold: computer-networks-tcp-and-udp-transport-foundations, computer-networks-tcp-and-udp-transport-mechanisms
+  - naive: recall=1.0000, mrr=1.0000, retrieved=computer-networks-tcp-and-udp-transport-mechanisms, computer-networks-tcp-and-udp-transport-foundations, computer-networks-tcp-and-udp-transport-applications, computer-networks-tcp-and-udp-transport-evaluation, computer-networks-tcp-and-udp-transport-tradeoffs
+  - graph: recall=0.5000, mrr=0.2000, retrieved=information-retrieval-bm25-and-sparse-retrieval-foundations, information-retrieval-bm25-and-sparse-retrieval-mechanisms, computer-networks-tcp-handshake-and-connection-teardown-foundations, computer-networks-tcp-handshake-and-connection-teardown-mechanisms, computer-networks-tcp-and-udp-transport-foundations
+- `expanded-q032-5` Why would the mechanisms perspective on TCP and the tradeoffs perspective on TCP need to be combined when answering a grounded systems question?
+  - gold: computer-networks-tcp-and-udp-transport-mechanisms, computer-networks-tcp-and-udp-transport-tradeoffs
+  - naive: recall=1.0000, mrr=1.0000, retrieved=computer-networks-tcp-and-udp-transport-mechanisms, computer-networks-tcp-and-udp-transport-tradeoffs, computer-networks-tcp-and-udp-transport-foundations, computer-networks-tcp-and-udp-transport-applications, computer-networks-tcp-and-udp-transport-evaluation
+  - graph: recall=0.5000, mrr=0.2500, retrieved=information-retrieval-bm25-and-sparse-retrieval-tradeoffs, information-retrieval-bm25-and-sparse-retrieval-mechanisms, computer-networks-tcp-handshake-and-connection-teardown-tradeoffs, computer-networks-tcp-and-udp-transport-tradeoffs, computer-networks-tcp-handshake-and-connection-teardown-mechanisms
+- `expanded-q041-5` Why would the foundations perspective on congestion control and the mechanisms perspective on congestion control need to be combined when answering a grounded systems question?
+  - gold: computer-networks-congestion-control-foundations, computer-networks-congestion-control-mechanisms
+  - naive: recall=1.0000, mrr=1.0000, retrieved=computer-networks-congestion-control-foundations, computer-networks-congestion-control-mechanisms, computer-networks-congestion-control-applications, computer-networks-congestion-control-evaluation, computer-networks-congestion-control-tradeoffs
+  - graph: recall=0.5000, mrr=0.2000, retrieved=computer-networks-tcp-and-udp-transport-foundations, computer-networks-tcp-and-udp-transport-applications, computer-networks-tcp-and-udp-transport-evaluation, computer-networks-tcp-and-udp-transport-mechanisms, computer-networks-congestion-control-foundations
+- `expanded-q042-5` Why would the mechanisms perspective on congestion control and the tradeoffs perspective on congestion control need to be combined when answering a grounded systems question?
+  - gold: computer-networks-congestion-control-mechanisms, computer-networks-congestion-control-tradeoffs
+  - naive: recall=1.0000, mrr=1.0000, retrieved=computer-networks-congestion-control-mechanisms, computer-networks-congestion-control-tradeoffs, computer-networks-congestion-control-foundations, computer-networks-congestion-control-applications, computer-networks-congestion-control-evaluation
+  - graph: recall=0.5000, mrr=0.2000, retrieved=computer-networks-tcp-and-udp-transport-tradeoffs, computer-networks-tcp-and-udp-transport-applications, computer-networks-tcp-and-udp-transport-mechanisms, computer-networks-tcp-and-udp-transport-evaluation, computer-networks-congestion-control-tradeoffs
+- `expanded-q060-5` Why would the evaluation perspective on IP and the foundations perspective on transaction need to be combined when answering a grounded systems question?
+  - gold: computer-networks-routing-nat-and-subnetting-evaluation, databases-transactions-and-acid-foundations
+  - naive: recall=0.5000, mrr=0.5000, retrieved=operating-systems-file-systems-and-journaling-foundations, databases-transactions-and-acid-foundations, databases-isolation-levels-and-anomalies-foundations, operating-systems-file-systems-and-journaling-evaluation, databases-transactions-and-acid-evaluation
+  - graph: recall=0.0000, mrr=0.0000, retrieved=databases-isolation-levels-and-anomalies-foundations, databases-isolation-levels-and-anomalies-evaluation, databases-transactions-and-acid-evaluation, operating-systems-file-systems-and-journaling-foundations, operating-systems-file-systems-and-journaling-evaluation
+- `expanded-q061-5` Why would the foundations perspective on transaction and the mechanisms perspective on transaction need to be combined when answering a grounded systems question?
+  - gold: databases-transactions-and-acid-foundations, databases-transactions-and-acid-mechanisms
+  - naive: recall=1.0000, mrr=0.3333, retrieved=databases-isolation-levels-and-anomalies-mechanisms, databases-isolation-levels-and-anomalies-foundations, databases-transactions-and-acid-mechanisms, databases-transactions-and-acid-foundations, databases-isolation-levels-and-anomalies-applications
+  - graph: recall=0.5000, mrr=0.2500, retrieved=databases-isolation-levels-and-anomalies-foundations, databases-isolation-levels-and-anomalies-mechanisms, databases-isolation-levels-and-anomalies-tradeoffs, databases-transactions-and-acid-foundations, databases-isolation-levels-and-anomalies-applications
 
 ## Noisy Graph Expansions
 
-- `q1` 为什么线程切换通常比进程切换开销更低？
-  - gold: os-进程与线程
-  - retrieved: os-进程与线程, os-cpu-调度算法, os-虚拟内存与页面置换, os-死锁与银行家算法, os-同步互斥与信号量
+- `expanded-q001-1` What is the core idea of Process and Thread Management Foundations?
+  - gold: operating-systems-process-and-thread-management-foundations
+  - retrieved: operating-systems-process-and-thread-management-foundations, operating-systems-process-and-thread-management-applications, operating-systems-process-and-thread-management-evaluation, operating-systems-process-and-thread-management-mechanisms, operating-systems-process-and-thread-management-tradeoffs
   - context_precision: 0.2000
-- `q2` 互斥锁、信号量和管程分别适合解决什么并发问题？
-  - gold: os-同步互斥与信号量
-  - retrieved: os-同步互斥与信号量, ai-rag-检索增强生成, os-死锁与银行家算法, os-进程与线程, os-cpu-调度算法
+- `expanded-q001-2` How does Process and Thread Management Foundations work internally?
+  - gold: operating-systems-process-and-thread-management-foundations
+  - retrieved: operating-systems-process-and-thread-management-foundations, operating-systems-process-and-thread-management-evaluation, operating-systems-process-and-thread-management-mechanisms, operating-systems-process-and-thread-management-applications, operating-systems-process-and-thread-management-tradeoffs
   - context_precision: 0.2000
-- `q3` 死锁产生需要哪些必要条件，银行家算法如何避免死锁？
-  - gold: os-死锁与银行家算法
-  - retrieved: os-死锁与银行家算法, os-进程与线程, os-cpu-调度算法, os-同步互斥与信号量, os-虚拟内存与页面置换
+- `expanded-q001-3` What tradeoff should be considered for Process and Thread Management Foundations?
+  - gold: operating-systems-process-and-thread-management-foundations
+  - retrieved: operating-systems-process-and-thread-management-foundations, operating-systems-process-and-thread-management-mechanisms, operating-systems-process-and-thread-management-applications, operating-systems-process-and-thread-management-tradeoffs, operating-systems-process-and-thread-management-evaluation
   - context_precision: 0.2000
-- `q4` LRU 页面置换为什么能利用程序局部性？
-  - gold: os-虚拟内存与页面置换
-  - retrieved: os-虚拟内存与页面置换, os-页表与-tlb, os-进程与线程, os-cpu-调度算法, os-死锁与银行家算法
+- `expanded-q002-1` What is the core idea of Process and Thread Management Mechanisms?
+  - gold: operating-systems-process-and-thread-management-mechanisms
+  - retrieved: operating-systems-process-and-thread-management-mechanisms, operating-systems-process-and-thread-management-foundations, operating-systems-process-and-thread-management-applications, operating-systems-process-and-thread-management-evaluation, operating-systems-process-and-thread-management-tradeoffs
   - context_precision: 0.2000
-- `q8` TCP 和 UDP 在可靠性和延迟方面有什么区别？
-  - gold: net-tcp-与-udp
-  - retrieved: net-tcp-与-udp, net-三次握手与四次挥手, ai-rag-评测指标, net-http-https-与-tls, net-dns-解析过程
+- `expanded-q002-2` How does Process and Thread Management Mechanisms work internally?
+  - gold: operating-systems-process-and-thread-management-mechanisms
+  - retrieved: operating-systems-process-and-thread-management-mechanisms, operating-systems-process-and-thread-management-evaluation, operating-systems-process-and-thread-management-foundations, operating-systems-process-and-thread-management-tradeoffs, operating-systems-process-and-thread-management-applications
   - context_precision: 0.2000
-- `q9` TCP 为什么建立连接需要三次握手？
-  - gold: net-三次握手与四次挥手
-  - retrieved: net-三次握手与四次挥手, net-tcp-与-udp, net-http-https-与-tls, net-dns-解析过程, os-进程与线程
+- `expanded-q002-3` What tradeoff should be considered for Process and Thread Management Mechanisms?
+  - gold: operating-systems-process-and-thread-management-mechanisms
+  - retrieved: operating-systems-process-and-thread-management-mechanisms, operating-systems-process-and-thread-management-foundations, operating-systems-process-and-thread-management-tradeoffs, operating-systems-process-and-thread-management-applications, operating-systems-process-and-thread-management-evaluation
   - context_precision: 0.2000
-- `q10` 滑动窗口和拥塞控制分别解决什么问题？
-  - gold: net-拥塞控制与滑动窗口
-  - retrieved: net-tcp-与-udp, net-拥塞控制与滑动窗口, os-进程与线程, ai-bm25-与向量检索, net-dns-解析过程
+- `expanded-q003-1` What is the core idea of Process and Thread Management Tradeoffs?
+  - gold: operating-systems-process-and-thread-management-tradeoffs
+  - retrieved: operating-systems-process-and-thread-management-tradeoffs, operating-systems-process-and-thread-management-foundations, operating-systems-process-and-thread-management-applications, operating-systems-process-and-thread-management-evaluation, operating-systems-process-and-thread-management-mechanisms
   - context_precision: 0.2000
-- `q11` DNS 递归解析通常会经过哪些服务器？
-  - gold: net-dns-解析过程
-  - retrieved: net-dns-解析过程, net-tcp-与-udp, net-ip-路由与-nat, net-http-https-与-tls, net-三次握手与四次挥手
+- `expanded-q003-2` How does Process and Thread Management Tradeoffs work internally?
+  - gold: operating-systems-process-and-thread-management-tradeoffs
+  - retrieved: operating-systems-process-and-thread-management-tradeoffs, operating-systems-process-and-thread-management-evaluation, operating-systems-process-and-thread-management-foundations, operating-systems-process-and-thread-management-mechanisms, operating-systems-process-and-thread-management-applications
   - context_precision: 0.2000
-- `q12` HTTPS 相比 HTTP 额外提供了哪些安全能力？
-  - gold: net-http-https-与-tls
-  - retrieved: net-http-https-与-tls, net-三次握手与四次挥手, net-tcp-与-udp
-  - context_precision: 0.3333
-- `q13` NAT 为什么会影响端到端连接模型？
-  - gold: net-ip-路由与-nat
-  - retrieved: net-ip-路由与-nat, net-子网划分, net-dns-解析过程
-  - context_precision: 0.3333
+- `expanded-q003-3` What tradeoff should be considered for Process and Thread Management Tradeoffs?
+  - gold: operating-systems-process-and-thread-management-tradeoffs
+  - retrieved: operating-systems-process-and-thread-management-tradeoffs, operating-systems-process-and-thread-management-foundations, operating-systems-process-and-thread-management-mechanisms, operating-systems-process-and-thread-management-applications, operating-systems-process-and-thread-management-evaluation
+  - context_precision: 0.2000
+- `expanded-q004-1` What is the core idea of Process and Thread Management Applications?
+  - gold: operating-systems-process-and-thread-management-applications
+  - retrieved: operating-systems-process-and-thread-management-applications, operating-systems-process-and-thread-management-foundations, operating-systems-process-and-thread-management-evaluation, operating-systems-process-and-thread-management-mechanisms, operating-systems-process-and-thread-management-tradeoffs
+  - context_precision: 0.2000
 
 ## Reranker Wins Over Hybrid
 
-- `q10` 滑动窗口和拥塞控制分别解决什么问题？
-  - gold: net-拥塞控制与滑动窗口
-  - hybrid: recall=1.0000, mrr=0.3333, retrieved=net-tcp-与-udp, ai-bm25-与向量检索, net-拥塞控制与滑动窗口, os-进程与线程
-  - rerank: recall=1.0000, mrr=0.5000, retrieved=net-tcp-与-udp, net-拥塞控制与滑动窗口, os-进程与线程, ai-bm25-与向量检索
-- `q38` 最长前缀匹配在路由选择中解决什么问题？
-  - gold: net-ip-路由与-nat
-  - hybrid: recall=1.0000, mrr=0.5000, retrieved=ai-rag-检索增强生成, net-ip-路由与-nat
-  - rerank: recall=1.0000, mrr=1.0000, retrieved=net-ip-路由与-nat, ai-rag-检索增强生成
-- `q97` 普通 RAG、GraphRAG 和 Self-RAG 分别缓解什么问题？
-  - gold: ai-rag-检索增强生成, ai-知识图谱与-graphrag, ai-self-rag-与反思检索
-  - hybrid: recall=1.0000, mrr=0.5000, retrieved=ai-rag-评测指标, ai-rag-检索增强生成, ai-self-rag-与反思检索, ai-知识图谱与-graphrag, ai-lora-与轻量微调
-  - rerank: recall=1.0000, mrr=1.0000, retrieved=ai-rag-检索增强生成, ai-rag-评测指标, ai-self-rag-与反思检索, ai-知识图谱与-graphrag, ai-lora-与轻量微调
+- `expanded-q005-4` Why might Process and Thread Management Evaluation and Synchronization and Mutual Exclusion Foundations both matter in a RAG-style system?
+  - gold: operating-systems-process-and-thread-management-evaluation, operating-systems-synchronization-and-mutual-exclusion-foundations
+  - hybrid: recall=0.5000, mrr=0.5000, retrieved=operating-systems-process-and-thread-management-foundations, operating-systems-process-and-thread-management-evaluation, operating-systems-process-and-thread-management-tradeoffs, operating-systems-process-and-thread-management-applications, operating-systems-process-and-thread-management-mechanisms
+  - rerank: recall=1.0000, mrr=1.0000, retrieved=operating-systems-process-and-thread-management-evaluation, operating-systems-process-and-thread-management-foundations, operating-systems-synchronization-and-mutual-exclusion-evaluation, operating-systems-synchronization-and-mutual-exclusion-foundations, operating-systems-process-and-thread-management-mechanisms
+- `expanded-q010-5` Why would the evaluation perspective on mutex and the foundations perspective on deadlock need to be combined when answering a grounded systems question?
+  - gold: operating-systems-synchronization-and-mutual-exclusion-evaluation, operating-systems-deadlock-and-resource-allocation-foundations
+  - hybrid: recall=1.0000, mrr=0.5000, retrieved=operating-systems-synchronization-and-mutual-exclusion-foundations, operating-systems-synchronization-and-mutual-exclusion-evaluation, operating-systems-deadlock-and-resource-allocation-foundations, operating-systems-deadlock-and-resource-allocation-evaluation, operating-systems-synchronization-and-mutual-exclusion-mechanisms
+  - rerank: recall=0.5000, mrr=1.0000, retrieved=operating-systems-synchronization-and-mutual-exclusion-evaluation, operating-systems-synchronization-and-mutual-exclusion-foundations, operating-systems-deadlock-and-resource-allocation-evaluation, operating-systems-synchronization-and-mutual-exclusion-tradeoffs, operating-systems-synchronization-and-mutual-exclusion-applications
+- `expanded-q020-4` Why might Virtual Memory and Page Replacement Evaluation and CPU Scheduling Foundations both matter in a RAG-style system?
+  - gold: operating-systems-virtual-memory-and-page-replacement-evaluation, operating-systems-cpu-scheduling-foundations
+  - hybrid: recall=0.5000, mrr=0.5000, retrieved=operating-systems-virtual-memory-and-page-replacement-foundations, operating-systems-virtual-memory-and-page-replacement-evaluation, operating-systems-virtual-memory-and-page-replacement-tradeoffs, operating-systems-virtual-memory-and-page-replacement-applications, operating-systems-virtual-memory-and-page-replacement-mechanisms
+  - rerank: recall=0.5000, mrr=1.0000, retrieved=operating-systems-virtual-memory-and-page-replacement-evaluation, operating-systems-virtual-memory-and-page-replacement-foundations, operating-systems-virtual-memory-and-page-replacement-mechanisms, operating-systems-cpu-scheduling-evaluation, operating-systems-virtual-memory-and-page-replacement-applications
+- `expanded-q040-4` Why might TCP Handshake and Connection Teardown Evaluation and Congestion Control Foundations both matter in a RAG-style system?
+  - gold: computer-networks-tcp-handshake-and-connection-teardown-evaluation, computer-networks-congestion-control-foundations
+  - hybrid: recall=0.5000, mrr=0.5000, retrieved=computer-networks-tcp-handshake-and-connection-teardown-foundations, computer-networks-tcp-handshake-and-connection-teardown-evaluation, computer-networks-tcp-handshake-and-connection-teardown-tradeoffs, computer-networks-tcp-handshake-and-connection-teardown-applications, computer-networks-tcp-handshake-and-connection-teardown-mechanisms
+  - rerank: recall=0.5000, mrr=1.0000, retrieved=computer-networks-tcp-handshake-and-connection-teardown-evaluation, computer-networks-tcp-handshake-and-connection-teardown-foundations, computer-networks-tcp-handshake-and-connection-teardown-mechanisms, computer-networks-tcp-handshake-and-connection-teardown-applications, computer-networks-congestion-control-evaluation
+- `expanded-q060-4` Why might Routing NAT and Subnetting Evaluation and Transactions and ACID Foundations both matter in a RAG-style system?
+  - gold: computer-networks-routing-nat-and-subnetting-evaluation, databases-transactions-and-acid-foundations
+  - hybrid: recall=0.5000, mrr=0.5000, retrieved=computer-networks-routing-nat-and-subnetting-foundations, computer-networks-routing-nat-and-subnetting-evaluation, computer-networks-routing-nat-and-subnetting-tradeoffs, computer-networks-routing-nat-and-subnetting-applications, computer-networks-routing-nat-and-subnetting-mechanisms
+  - rerank: recall=1.0000, mrr=1.0000, retrieved=computer-networks-routing-nat-and-subnetting-evaluation, computer-networks-routing-nat-and-subnetting-foundations, databases-transactions-and-acid-evaluation, databases-transactions-and-acid-foundations, rag-systems-rag-evaluation-metrics-foundations
+- `expanded-q070-4` Why might Isolation Levels and Anomalies Evaluation and Index Structures Foundations both matter in a RAG-style system?
+  - gold: databases-isolation-levels-and-anomalies-evaluation, databases-index-structures-foundations
+  - hybrid: recall=0.5000, mrr=0.5000, retrieved=databases-isolation-levels-and-anomalies-foundations, databases-isolation-levels-and-anomalies-evaluation, databases-isolation-levels-and-anomalies-tradeoffs, databases-isolation-levels-and-anomalies-applications, databases-isolation-levels-and-anomalies-mechanisms
+  - rerank: recall=1.0000, mrr=1.0000, retrieved=databases-isolation-levels-and-anomalies-evaluation, databases-isolation-levels-and-anomalies-foundations, databases-index-structures-evaluation, databases-index-structures-foundations, databases-isolation-levels-and-anomalies-mechanisms
+- `expanded-q075-5` Why would the evaluation perspective on B+ tree and the foundations perspective on MVCC need to be combined when answering a grounded systems question?
+  - gold: databases-index-structures-evaluation, databases-mvcc-and-snapshot-reads-foundations
+  - hybrid: recall=1.0000, mrr=0.5000, retrieved=databases-index-structures-foundations, databases-index-structures-evaluation, databases-mvcc-and-snapshot-reads-foundations, databases-mvcc-and-snapshot-reads-evaluation, databases-index-structures-applications
+  - rerank: recall=0.5000, mrr=1.0000, retrieved=databases-index-structures-evaluation, databases-index-structures-applications, databases-index-structures-foundations, databases-index-structures-tradeoffs, rag-systems-raptor-tree-retrieval-evaluation
+- `expanded-q080-4` Why might MVCC and Snapshot Reads Evaluation and Query Optimization Foundations both matter in a RAG-style system?
+  - gold: databases-mvcc-and-snapshot-reads-evaluation, databases-query-optimization-foundations
+  - hybrid: recall=0.5000, mrr=0.5000, retrieved=databases-mvcc-and-snapshot-reads-foundations, databases-mvcc-and-snapshot-reads-evaluation, databases-mvcc-and-snapshot-reads-tradeoffs, databases-mvcc-and-snapshot-reads-applications, databases-mvcc-and-snapshot-reads-mechanisms
+  - rerank: recall=1.0000, mrr=1.0000, retrieved=databases-mvcc-and-snapshot-reads-evaluation, databases-mvcc-and-snapshot-reads-foundations, databases-query-optimization-evaluation, databases-query-optimization-foundations, databases-mvcc-and-snapshot-reads-mechanisms
+- `expanded-q080-5` Why would the evaluation perspective on MVCC and the foundations perspective on query optimizer need to be combined when answering a grounded systems question?
+  - gold: databases-mvcc-and-snapshot-reads-evaluation, databases-query-optimization-foundations
+  - hybrid: recall=1.0000, mrr=0.5000, retrieved=databases-mvcc-and-snapshot-reads-foundations, databases-query-optimization-foundations, databases-mvcc-and-snapshot-reads-evaluation, databases-query-optimization-evaluation, databases-mvcc-and-snapshot-reads-applications
+  - rerank: recall=0.5000, mrr=1.0000, retrieved=databases-mvcc-and-snapshot-reads-evaluation, databases-mvcc-and-snapshot-reads-foundations, databases-query-optimization-evaluation, databases-index-structures-evaluation, information-retrieval-bm25-and-sparse-retrieval-evaluation
+- `expanded-q105-4` Why might Intermediate Representation and Data Flow Evaluation and Register Allocation Foundations both matter in a RAG-style system?
+  - gold: compilers-intermediate-representation-and-data-flow-evaluation, compilers-register-allocation-foundations
+  - hybrid: recall=0.5000, mrr=0.5000, retrieved=compilers-intermediate-representation-and-data-flow-foundations, compilers-intermediate-representation-and-data-flow-evaluation, compilers-intermediate-representation-and-data-flow-tradeoffs, compilers-intermediate-representation-and-data-flow-applications, compilers-intermediate-representation-and-data-flow-mechanisms
+  - rerank: recall=0.5000, mrr=1.0000, retrieved=compilers-intermediate-representation-and-data-flow-evaluation, compilers-intermediate-representation-and-data-flow-foundations, compilers-intermediate-representation-and-data-flow-mechanisms, compilers-intermediate-representation-and-data-flow-applications, compilers-intermediate-representation-and-data-flow-tradeoffs
 
 ## Pruned GraphRAG Precision Wins
 
-- `q1` 为什么线程切换通常比进程切换开销更低？
-  - gold: os-进程与线程
-  - graph: recall=1.0000, mrr=1.0000, retrieved=os-进程与线程, os-cpu-调度算法, os-虚拟内存与页面置换, os-死锁与银行家算法, os-同步互斥与信号量
-  - pruned: recall=1.0000, mrr=1.0000, retrieved=os-进程与线程, os-cpu-调度算法, os-虚拟内存与页面置换
-- `q2` 互斥锁、信号量和管程分别适合解决什么并发问题？
-  - gold: os-同步互斥与信号量
-  - graph: recall=1.0000, mrr=1.0000, retrieved=os-同步互斥与信号量, ai-rag-检索增强生成, os-死锁与银行家算法, os-进程与线程, os-cpu-调度算法
-  - pruned: recall=1.0000, mrr=1.0000, retrieved=os-同步互斥与信号量, ai-rag-检索增强生成, os-死锁与银行家算法
-- `q3` 死锁产生需要哪些必要条件，银行家算法如何避免死锁？
-  - gold: os-死锁与银行家算法
-  - graph: recall=1.0000, mrr=1.0000, retrieved=os-死锁与银行家算法, os-进程与线程, os-cpu-调度算法, os-同步互斥与信号量, os-虚拟内存与页面置换
-  - pruned: recall=1.0000, mrr=1.0000, retrieved=os-死锁与银行家算法
-- `q4` LRU 页面置换为什么能利用程序局部性？
-  - gold: os-虚拟内存与页面置换
-  - graph: recall=1.0000, mrr=1.0000, retrieved=os-虚拟内存与页面置换, os-页表与-tlb, os-进程与线程, os-cpu-调度算法, os-死锁与银行家算法
-  - pruned: recall=1.0000, mrr=1.0000, retrieved=os-虚拟内存与页面置换
-- `q5` TLB 为什么可以降低虚拟地址转换开销？
-  - gold: os-页表与-tlb
-  - graph: recall=1.0000, mrr=1.0000, retrieved=os-页表与-tlb, os-虚拟内存与页面置换
-  - pruned: recall=1.0000, mrr=1.0000, retrieved=os-页表与-tlb
-- `q8` TCP 和 UDP 在可靠性和延迟方面有什么区别？
-  - gold: net-tcp-与-udp
-  - graph: recall=1.0000, mrr=1.0000, retrieved=net-tcp-与-udp, net-三次握手与四次挥手, ai-rag-评测指标, net-http-https-与-tls, net-dns-解析过程
-  - pruned: recall=1.0000, mrr=1.0000, retrieved=net-tcp-与-udp, net-三次握手与四次挥手, ai-rag-评测指标
-- `q9` TCP 为什么建立连接需要三次握手？
-  - gold: net-三次握手与四次挥手
-  - graph: recall=1.0000, mrr=1.0000, retrieved=net-三次握手与四次挥手, net-tcp-与-udp, net-http-https-与-tls, net-dns-解析过程, os-进程与线程
-  - pruned: recall=1.0000, mrr=1.0000, retrieved=net-三次握手与四次挥手, net-tcp-与-udp, net-http-https-与-tls
-- `q10` 滑动窗口和拥塞控制分别解决什么问题？
-  - gold: net-拥塞控制与滑动窗口
-  - graph: recall=1.0000, mrr=0.5000, retrieved=net-tcp-与-udp, net-拥塞控制与滑动窗口, os-进程与线程, ai-bm25-与向量检索, net-dns-解析过程
-  - pruned: recall=1.0000, mrr=0.5000, retrieved=net-tcp-与-udp, net-拥塞控制与滑动窗口, os-进程与线程
-- `q11` DNS 递归解析通常会经过哪些服务器？
-  - gold: net-dns-解析过程
-  - graph: recall=1.0000, mrr=1.0000, retrieved=net-dns-解析过程, net-tcp-与-udp, net-ip-路由与-nat, net-http-https-与-tls, net-三次握手与四次挥手
-  - pruned: recall=1.0000, mrr=1.0000, retrieved=net-dns-解析过程, net-tcp-与-udp
-- `q12` HTTPS 相比 HTTP 额外提供了哪些安全能力？
-  - gold: net-http-https-与-tls
-  - graph: recall=1.0000, mrr=1.0000, retrieved=net-http-https-与-tls, net-三次握手与四次挥手, net-tcp-与-udp
-  - pruned: recall=1.0000, mrr=1.0000, retrieved=net-http-https-与-tls
+- `expanded-q001-1` What is the core idea of Process and Thread Management Foundations?
+  - gold: operating-systems-process-and-thread-management-foundations
+  - graph: recall=1.0000, mrr=1.0000, retrieved=operating-systems-process-and-thread-management-foundations, operating-systems-process-and-thread-management-applications, operating-systems-process-and-thread-management-evaluation, operating-systems-process-and-thread-management-mechanisms, operating-systems-process-and-thread-management-tradeoffs
+  - pruned: recall=1.0000, mrr=1.0000, retrieved=operating-systems-process-and-thread-management-foundations, operating-systems-process-and-thread-management-applications, operating-systems-process-and-thread-management-evaluation
+- `expanded-q001-2` How does Process and Thread Management Foundations work internally?
+  - gold: operating-systems-process-and-thread-management-foundations
+  - graph: recall=1.0000, mrr=1.0000, retrieved=operating-systems-process-and-thread-management-foundations, operating-systems-process-and-thread-management-evaluation, operating-systems-process-and-thread-management-mechanisms, operating-systems-process-and-thread-management-applications, operating-systems-process-and-thread-management-tradeoffs
+  - pruned: recall=1.0000, mrr=1.0000, retrieved=operating-systems-process-and-thread-management-foundations, operating-systems-process-and-thread-management-evaluation, operating-systems-process-and-thread-management-mechanisms
+- `expanded-q001-3` What tradeoff should be considered for Process and Thread Management Foundations?
+  - gold: operating-systems-process-and-thread-management-foundations
+  - graph: recall=1.0000, mrr=1.0000, retrieved=operating-systems-process-and-thread-management-foundations, operating-systems-process-and-thread-management-mechanisms, operating-systems-process-and-thread-management-applications, operating-systems-process-and-thread-management-tradeoffs, operating-systems-process-and-thread-management-evaluation
+  - pruned: recall=1.0000, mrr=1.0000, retrieved=operating-systems-process-and-thread-management-foundations, operating-systems-process-and-thread-management-mechanisms, operating-systems-process-and-thread-management-applications
+- `expanded-q001-4` Why might Process and Thread Management Foundations and Process and Thread Management Mechanisms both matter in a RAG-style system?
+  - gold: operating-systems-process-and-thread-management-foundations, operating-systems-process-and-thread-management-mechanisms
+  - graph: recall=1.0000, mrr=1.0000, retrieved=operating-systems-process-and-thread-management-mechanisms, operating-systems-process-and-thread-management-foundations, operating-systems-process-and-thread-management-evaluation, operating-systems-process-and-thread-management-applications, operating-systems-process-and-thread-management-tradeoffs
+  - pruned: recall=1.0000, mrr=1.0000, retrieved=operating-systems-process-and-thread-management-mechanisms, operating-systems-process-and-thread-management-foundations, operating-systems-process-and-thread-management-evaluation
+- `expanded-q002-1` What is the core idea of Process and Thread Management Mechanisms?
+  - gold: operating-systems-process-and-thread-management-mechanisms
+  - graph: recall=1.0000, mrr=1.0000, retrieved=operating-systems-process-and-thread-management-mechanisms, operating-systems-process-and-thread-management-foundations, operating-systems-process-and-thread-management-applications, operating-systems-process-and-thread-management-evaluation, operating-systems-process-and-thread-management-tradeoffs
+  - pruned: recall=1.0000, mrr=1.0000, retrieved=operating-systems-process-and-thread-management-mechanisms, operating-systems-process-and-thread-management-foundations, operating-systems-process-and-thread-management-applications
+- `expanded-q002-2` How does Process and Thread Management Mechanisms work internally?
+  - gold: operating-systems-process-and-thread-management-mechanisms
+  - graph: recall=1.0000, mrr=1.0000, retrieved=operating-systems-process-and-thread-management-mechanisms, operating-systems-process-and-thread-management-evaluation, operating-systems-process-and-thread-management-foundations, operating-systems-process-and-thread-management-tradeoffs, operating-systems-process-and-thread-management-applications
+  - pruned: recall=1.0000, mrr=1.0000, retrieved=operating-systems-process-and-thread-management-mechanisms, operating-systems-process-and-thread-management-evaluation, operating-systems-process-and-thread-management-foundations
+- `expanded-q002-3` What tradeoff should be considered for Process and Thread Management Mechanisms?
+  - gold: operating-systems-process-and-thread-management-mechanisms
+  - graph: recall=1.0000, mrr=1.0000, retrieved=operating-systems-process-and-thread-management-mechanisms, operating-systems-process-and-thread-management-foundations, operating-systems-process-and-thread-management-tradeoffs, operating-systems-process-and-thread-management-applications, operating-systems-process-and-thread-management-evaluation
+  - pruned: recall=1.0000, mrr=1.0000, retrieved=operating-systems-process-and-thread-management-mechanisms, operating-systems-process-and-thread-management-foundations, operating-systems-process-and-thread-management-tradeoffs
+- `expanded-q002-4` Why might Process and Thread Management Mechanisms and Process and Thread Management Tradeoffs both matter in a RAG-style system?
+  - gold: operating-systems-process-and-thread-management-mechanisms, operating-systems-process-and-thread-management-tradeoffs
+  - graph: recall=1.0000, mrr=1.0000, retrieved=operating-systems-process-and-thread-management-mechanisms, operating-systems-process-and-thread-management-tradeoffs, operating-systems-process-and-thread-management-foundations, operating-systems-process-and-thread-management-evaluation, operating-systems-process-and-thread-management-applications
+  - pruned: recall=1.0000, mrr=1.0000, retrieved=operating-systems-process-and-thread-management-mechanisms, operating-systems-process-and-thread-management-tradeoffs, operating-systems-process-and-thread-management-foundations
+- `expanded-q003-1` What is the core idea of Process and Thread Management Tradeoffs?
+  - gold: operating-systems-process-and-thread-management-tradeoffs
+  - graph: recall=1.0000, mrr=1.0000, retrieved=operating-systems-process-and-thread-management-tradeoffs, operating-systems-process-and-thread-management-foundations, operating-systems-process-and-thread-management-applications, operating-systems-process-and-thread-management-evaluation, operating-systems-process-and-thread-management-mechanisms
+  - pruned: recall=1.0000, mrr=1.0000, retrieved=operating-systems-process-and-thread-management-tradeoffs, operating-systems-process-and-thread-management-foundations, operating-systems-process-and-thread-management-applications
+- `expanded-q003-2` How does Process and Thread Management Tradeoffs work internally?
+  - gold: operating-systems-process-and-thread-management-tradeoffs
+  - graph: recall=1.0000, mrr=1.0000, retrieved=operating-systems-process-and-thread-management-tradeoffs, operating-systems-process-and-thread-management-evaluation, operating-systems-process-and-thread-management-foundations, operating-systems-process-and-thread-management-mechanisms, operating-systems-process-and-thread-management-applications
+  - pruned: recall=1.0000, mrr=1.0000, retrieved=operating-systems-process-and-thread-management-tradeoffs, operating-systems-process-and-thread-management-evaluation, operating-systems-process-and-thread-management-foundations
 
 ## Remaining Misses
 
-- `q43` 寄存器不足时编译器通常如何处理变量？
-  - gold: compiler-寄存器分配
-  - retrieved: compiler-中间代码与活跃变量
-  - recall: 0.0000
-- `q47` 如果问题包含精确术语“BCNF”，稀疏检索为什么可能有优势？
-  - gold: ai-bm25-与向量检索, db-范式与函数依赖
-  - retrieved: db-范式与函数依赖
+- `expanded-q004-5` Why would the applications perspective on process and the evaluation perspective on process need to be combined when answering a grounded systems question?
+  - gold: operating-systems-process-and-thread-management-applications, operating-systems-process-and-thread-management-evaluation
+  - retrieved: operating-systems-virtual-memory-and-page-replacement-applications, operating-systems-virtual-memory-and-page-replacement-evaluation, databases-query-optimization-applications, databases-query-optimization-evaluation, operating-systems-process-and-thread-management-applications
   - recall: 0.5000
-- `q75` 变量未声明属于哪一类编译错误检查？
-  - gold: compiler-语义分析与类型检查
-  - retrieved: 
-  - recall: 0.0000
-- `q77` 变量溢出到内存通常发生在什么情况下？
-  - gold: compiler-寄存器分配
-  - retrieved: 
-  - recall: 0.0000
-- `q81` 图路径扩展为什么可能带来无关证据？
-  - gold: ai-知识图谱与-graphrag
-  - retrieved: 
-  - recall: 0.0000
-- `q95` 符号表为什么会同时影响语义分析和后续代码生成？
-  - gold: compiler-语义分析与类型检查, compiler-中间代码与活跃变量
-  - retrieved: compiler-语义分析与类型检查, ai-rag-检索增强生成
+- `expanded-q005-4` Why might Process and Thread Management Evaluation and Synchronization and Mutual Exclusion Foundations both matter in a RAG-style system?
+  - gold: operating-systems-process-and-thread-management-evaluation, operating-systems-synchronization-and-mutual-exclusion-foundations
+  - retrieved: operating-systems-process-and-thread-management-evaluation, operating-systems-process-and-thread-management-foundations, operating-systems-process-and-thread-management-mechanisms, operating-systems-process-and-thread-management-applications, operating-systems-process-and-thread-management-tradeoffs
   - recall: 0.5000
-- `q100` 为什么轻量微调在本项目中优先作用于检索模块而不是生成模块？
-  - gold: ai-lora-与轻量微调, ai-重排序与-hard-negative
-  - retrieved: 
-  - recall: 0.0000
+- `expanded-q010-5` Why would the evaluation perspective on mutex and the foundations perspective on deadlock need to be combined when answering a grounded systems question?
+  - gold: operating-systems-synchronization-and-mutual-exclusion-evaluation, operating-systems-deadlock-and-resource-allocation-foundations
+  - retrieved: operating-systems-synchronization-and-mutual-exclusion-foundations, operating-systems-synchronization-and-mutual-exclusion-evaluation, operating-systems-deadlock-and-resource-allocation-evaluation, operating-systems-synchronization-and-mutual-exclusion-tradeoffs, operating-systems-synchronization-and-mutual-exclusion-applications
+  - recall: 0.5000
+- `expanded-q012-5` Why would the mechanisms perspective on deadlock and the tradeoffs perspective on deadlock need to be combined when answering a grounded systems question?
+  - gold: operating-systems-deadlock-and-resource-allocation-mechanisms, operating-systems-deadlock-and-resource-allocation-tradeoffs
+  - retrieved: rag-systems-graphrag-retrieval-tradeoffs, operating-systems-synchronization-and-mutual-exclusion-tradeoffs, rag-systems-graphrag-retrieval-mechanisms, operating-systems-synchronization-and-mutual-exclusion-mechanisms, operating-systems-deadlock-and-resource-allocation-tradeoffs
+  - recall: 0.5000
+- `expanded-q013-5` Why would the tradeoffs perspective on deadlock and the applications perspective on deadlock need to be combined when answering a grounded systems question?
+  - gold: operating-systems-deadlock-and-resource-allocation-tradeoffs, operating-systems-deadlock-and-resource-allocation-applications
+  - retrieved: rag-systems-graphrag-retrieval-tradeoffs, operating-systems-synchronization-and-mutual-exclusion-tradeoffs, rag-systems-graphrag-retrieval-applications, operating-systems-synchronization-and-mutual-exclusion-applications, operating-systems-deadlock-and-resource-allocation-applications
+  - recall: 0.5000
+- `expanded-q015-5` Why would the evaluation perspective on deadlock and the foundations perspective on virtual memory need to be combined when answering a grounded systems question?
+  - gold: operating-systems-deadlock-and-resource-allocation-evaluation, operating-systems-virtual-memory-and-page-replacement-foundations
+  - retrieved: operating-systems-virtual-memory-and-page-replacement-foundations, operating-systems-virtual-memory-and-page-replacement-evaluation, operating-systems-virtual-memory-and-page-replacement-tradeoffs, operating-systems-virtual-memory-and-page-replacement-applications, operating-systems-virtual-memory-and-page-replacement-mechanisms
+  - recall: 0.5000
+- `expanded-q020-4` Why might Virtual Memory and Page Replacement Evaluation and CPU Scheduling Foundations both matter in a RAG-style system?
+  - gold: operating-systems-virtual-memory-and-page-replacement-evaluation, operating-systems-cpu-scheduling-foundations
+  - retrieved: operating-systems-virtual-memory-and-page-replacement-evaluation, operating-systems-virtual-memory-and-page-replacement-foundations, operating-systems-virtual-memory-and-page-replacement-mechanisms, operating-systems-virtual-memory-and-page-replacement-applications, operating-systems-virtual-memory-and-page-replacement-tradeoffs
+  - recall: 0.5000
+- `expanded-q030-5` Why would the evaluation perspective on file system and the foundations perspective on TCP need to be combined when answering a grounded systems question?
+  - gold: operating-systems-file-systems-and-journaling-evaluation, computer-networks-tcp-and-udp-transport-foundations
+  - retrieved: operating-systems-file-systems-and-journaling-foundations, operating-systems-file-systems-and-journaling-evaluation, information-retrieval-bm25-and-sparse-retrieval-evaluation, operating-systems-file-systems-and-journaling-tradeoffs, operating-systems-file-systems-and-journaling-applications
+  - recall: 0.5000
+- `expanded-q031-5` Why would the foundations perspective on TCP and the mechanisms perspective on TCP need to be combined when answering a grounded systems question?
+  - gold: computer-networks-tcp-and-udp-transport-foundations, computer-networks-tcp-and-udp-transport-mechanisms
+  - retrieved: information-retrieval-bm25-and-sparse-retrieval-foundations, information-retrieval-bm25-and-sparse-retrieval-mechanisms, computer-networks-tcp-handshake-and-connection-teardown-foundations, computer-networks-tcp-handshake-and-connection-teardown-mechanisms, computer-networks-tcp-and-udp-transport-foundations
+  - recall: 0.5000
+- `expanded-q032-5` Why would the mechanisms perspective on TCP and the tradeoffs perspective on TCP need to be combined when answering a grounded systems question?
+  - gold: computer-networks-tcp-and-udp-transport-mechanisms, computer-networks-tcp-and-udp-transport-tradeoffs
+  - retrieved: information-retrieval-bm25-and-sparse-retrieval-tradeoffs, information-retrieval-bm25-and-sparse-retrieval-mechanisms, computer-networks-tcp-handshake-and-connection-teardown-tradeoffs, computer-networks-tcp-and-udp-transport-tradeoffs, computer-networks-tcp-handshake-and-connection-teardown-mechanisms
+  - recall: 0.5000

@@ -6,4 +6,5 @@ __pycache__/
 src/*.egg-info/
 artifacts/*.joblib
 artifacts/*.pkl
+artifacts/*.json
 reports/*.json

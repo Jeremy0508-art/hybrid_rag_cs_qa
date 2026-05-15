@@ -2,13 +2,24 @@ from __future__ import annotations
 
 import json
 import math
+from collections import defaultdict
 from pathlib import Path
 
 from .data import load_qa
 from .pipeline import RagPipeline
 
 
-METHODS = ("naive", "hybrid", "hybrid_rerank", "graph_reflect", "graph_pruned")
+METHODS = (
+    "naive",
+    "hybrid",
+    "hybrid_rerank",
+    "graph_reflect",
+    "graph_pruned",
+    "raptor",
+    "raptor_topdown",
+    "hybrid_raptor",
+    "graph_raptor_pruned",
+)
 
 
 def evaluate(corpus_path: Path, qa_path: Path, reranker_path: Path, out_path: Path, top_k: int = 5) -> dict:
@@ -26,6 +37,13 @@ def evaluate(corpus_path: Path, qa_path: Path, reranker_path: Path, out_path: Pa
                 {
                     "id": item.id,
                     "question": item.question,
+                    "topic": item.topic,
+                    "subtopic": item.subtopic,
+                    "difficulty": item.difficulty,
+                    "type": item.question_type,
+                    "requires_multi_hop": item.requires_multi_hop,
+                    "expected_concepts": list(item.expected_concepts),
+                    "answer_style": item.answer_style,
                     "retrieved": retrieved,
                     "gold": gold_ids,
                     "recall": recall_at_k(retrieved, gold),
@@ -35,6 +53,7 @@ def evaluate(corpus_path: Path, qa_path: Path, reranker_path: Path, out_path: Pa
                 }
             )
         report[method] = summarize(rows)
+        report[method]["groups"] = summarize_groups(rows)
         report[method]["examples"] = rows[:3]
         report[method]["rows"] = rows
     out_path.parent.mkdir(parents=True, exist_ok=True)
@@ -68,11 +87,33 @@ def context_precision(retrieved: list[str], gold: set[str]) -> float:
 
 
 def summarize(rows: list[dict]) -> dict:
+    if not rows:
+        return {"recall": 0.0, "mrr": 0.0, "ndcg": 0.0, "context_precision": 0.0, "num_questions": 0}
     keys = ("recall", "mrr", "ndcg", "context_precision")
     return {
         key: round(sum(row[key] for row in rows) / len(rows), 4)
         for key in keys
     } | {"num_questions": len(rows)}
+
+
+def summarize_groups(rows: list[dict]) -> dict[str, dict[str, dict]]:
+    return {
+        "by_topic": _summarize_by(rows, "topic"),
+        "by_difficulty": _summarize_by(rows, "difficulty"),
+        "by_type": _summarize_by(rows, "type"),
+        "by_multi_hop": _summarize_by(rows, "requires_multi_hop"),
+        "by_answer_style": _summarize_by(rows, "answer_style"),
+    }
+
+
+def _summarize_by(rows: list[dict], key: str) -> dict[str, dict]:
+    grouped: dict[str, list[dict]] = defaultdict(list)
+    for row in rows:
+        grouped[str(row.get(key, "unknown"))].append(row)
+    return {
+        group: summarize(group_rows)
+        for group, group_rows in sorted(grouped.items(), key=lambda item: item[0])
+    }
 
 
 def write_markdown_report(report: dict, path: Path) -> None:
@@ -89,6 +130,16 @@ def write_markdown_report(report: dict, path: Path) -> None:
             f"| {method} | {metrics['recall']:.4f} | {metrics['mrr']:.4f} | "
             f"{metrics['ndcg']:.4f} | {metrics['context_precision']:.4f} |"
         )
+    lines.extend(["", "## Grouped Metrics", ""])
+    lines.extend(_group_table(report, "by_topic", "Topic"))
+    lines.extend(["", ""])
+    lines.extend(_group_table(report, "by_type", "Question Type"))
+    lines.extend(["", ""])
+    lines.extend(_group_table(report, "by_difficulty", "Difficulty"))
+    lines.extend(["", ""])
+    lines.extend(_group_table(report, "by_multi_hop", "Requires Multi-hop"))
+    lines.extend(["", ""])
+    lines.extend(_group_table(report, "by_answer_style", "Answer Style"))
     lines.extend(
         [
             "",
@@ -100,6 +151,24 @@ def write_markdown_report(report: dict, path: Path) -> None:
         ]
     )
     path.write_text("\n".join(lines) + "\n", encoding="utf-8")
+
+
+def _group_table(report: dict, group_key: str, label: str) -> list[str]:
+    lines = [
+        f"### {label}",
+        "",
+        f"| {label} | Method | Questions | Recall@5 | MRR | NDCG | Context Precision |",
+        "|---|---|---:|---:|---:|---:|---:|",
+    ]
+    for method, metrics in report.items():
+        groups = metrics.get("groups", {}).get(group_key, {})
+        for group, group_metrics in groups.items():
+            lines.append(
+                f"| {group} | {method} | {group_metrics['num_questions']} | "
+                f"{group_metrics['recall']:.4f} | {group_metrics['mrr']:.4f} | "
+                f"{group_metrics['ndcg']:.4f} | {group_metrics['context_precision']:.4f} |"
+            )
+    return lines
 
 
 def write_error_analysis(report: dict, path: Path) -> None:

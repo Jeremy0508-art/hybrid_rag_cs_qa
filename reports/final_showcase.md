@@ -2,7 +2,7 @@
 
 ## 项目一句话
 
-面向计算机课程问答，构建 Hybrid Self-Reflective GraphRAG 系统，通过混合检索、概念图扩展、hard-negative 重排序、证据压缩和本地 Ollama LLM 生成，完成可复现的 RAG 检索与生成评测闭环。
+面向计算机课程问答，将原来的基础 RAG 小实验升级为可复现的成熟 RAG 研究型项目：系统支持扩展数据集、BM25 + dense 混合检索、GraphRAG、RAPTOR summary tree、Hybrid RAPTOR 融合检索、证据压缩、自适应生成预算、分组检索评估和分组生成评估。
 
 ## 核心结果
 
@@ -12,30 +12,26 @@
 
 ## 关键发现
 
-- Naive RAG 在 100 条 QA 上 Recall@5 为 0.7500，说明普通检索会漏掉部分多跳和概念关联问题。
-- Graph + Reflection RAG 将 Recall@5 提升到 0.9400，但 Context Precision 下降到 0.4140，说明图扩展带来噪声。
-- Graph + Pruning RAG 将 Context Precision 提升到 0.6450，同时保持 0.9367 的 Recall@5。
-- 生成评测中 Citation Accuracy 达到 0.6450，Citation Recall 达到 0.9367。
-- 本地 Ollama 实验接入 `qwen-rag:3b`，跑通真实 LLM 端到端问答；样例分析显示 3B 模型比 0.5B 更适合展示自然语言回答，但自动指标仍会偏好更贴近原文的抽取式答案。
+- 数据集已从 34 个知识块和 100 条 QA 扩展到 150 个课程文档和 750 条标注 QA，并覆盖 citation-grounded、title-explicit、paraphrase 和 multi-hop paraphrase 问题。
+- `hybrid_raptor` 在整体检索上表现最好：Recall@5 = 0.9813，MRR = 0.9822，NDCG = 0.9723。
+- `graph_raptor_pruned` 更偏向高质量上下文：Recall@5 = 0.9667，MRR = 0.9833，Context Precision = 0.3864，高于未压缩融合检索的 0.2725。
+- 在更难的 paraphrase 子集上，`graph_raptor_pruned` 的 Context Precision = 0.4433，说明证据压缩对低噪声引用更有价值。
+- 生成评估采用 `graph_raptor_pruned` + adaptive top-k：Faithfulness = 0.9909，Answer Coverage = 0.9814，Citation Recall = 0.9687。
+- RAPTOR 的 summary node 目前采用本地确定性摘要器，保证测试和实验可复现；后续可切换为 LLM summarizer 或更强 embedding backend。
 
-## 本地 LLM 实验
-
-| Model | Faithfulness | Answer Coverage | Citation Accuracy | Citation Recall |
-|---|---:|---:|---:|---:|
-| `qwen-rag:0.5b` | 0.7251 | 0.3151 | 0.6666 | 1.0000 |
-| `qwen-rag:3b` | 0.3378 | 0.2383 | 0.6666 | 1.0000 |
-
-解释：0.5B 的词面重合指标更高，但容易拼接无关片段；3B 的回答更自然，引用格式经 prompt 收紧后更稳定。这个结果说明项目同时做了自动指标评测和人工误差分析。
-
-## 可复现命令
+## 当前推荐命令
 
 ```powershell
+cs-rag build-expanded-dataset
+cs-rag prepare
 cs-rag train-reranker
+cs-rag build-raptor-tree
 cs-rag evaluate
-cs-rag evaluate-generation
-
-$env:CS_RAG_LLM_MODEL="qwen-rag:3b"
-cs-rag evaluate-generation --generator ollama --limit 10 --out reports/generation_results_ollama_3b.json
-
+cs-rag evaluate-generation --method graph_raptor_pruned --top-k 3 --adaptive-top-k --multi-hop-top-k 4
 cs-rag build-showcase
+pytest -q
 ```
+
+## 推荐展示口径
+
+这个项目的重点不是把一个 demo 包装成复杂系统，而是把 RAG 中常见的三类矛盾拆开验证：召回更多证据、控制上下文噪声、让生成答案保持可引用。扩展数据集之后，RAPTOR 负责提供层次化语义摘要和跨 chunk 线索，GraphRAG 负责补充概念邻接关系，证据压缩负责把最终上下文收紧到更适合生成的证据集合。

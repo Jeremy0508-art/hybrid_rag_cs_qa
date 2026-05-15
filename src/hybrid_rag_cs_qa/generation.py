@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import json
 import re
+from collections import defaultdict
 from pathlib import Path
 
 from .data import load_qa
@@ -65,10 +66,12 @@ def evaluate_generation(
     qa_path: Path,
     reranker_path: Path,
     out_path: Path,
-    method: str = "graph_pruned",
+    method: str = "graph_raptor_pruned",
     top_k: int = 3,
     generator: str = "extractive",
     limit: int | None = None,
+    adaptive_top_k: bool = False,
+    multi_hop_top_k: int | None = None,
 ) -> dict:
     from .pipeline import RagPipeline
 
@@ -79,18 +82,22 @@ def evaluate_generation(
     rows = []
     used_generators: set[str] = set()
     for item in qa_items:
-        results = pipeline.search(item.question, method=method, top_k=top_k)
+        item_top_k = choose_generation_top_k(item, top_k, adaptive_top_k, multi_hop_top_k)
+        results = pipeline.search(item.question, method=method, top_k=item_top_k)
         answer, used_generator = generate_answer(item.question, results, generator=generator)
         used_generators.add(used_generator)
-        rows.append(score_answer(item, answer, results))
+        rows.append(score_answer(item, answer, results, top_k=item_top_k))
 
     report = summarize_generation(rows) | {
         "method": method,
         "top_k": top_k,
+        "adaptive_top_k": adaptive_top_k,
+        "multi_hop_top_k": multi_hop_top_k,
         "generator": generator,
         "used_generators": sorted(used_generators),
         "num_questions": len(rows),
         "limit": limit,
+        "groups": summarize_generation_groups(rows),
         "rows": rows,
     }
     out_path.parent.mkdir(parents=True, exist_ok=True)
@@ -99,13 +106,33 @@ def evaluate_generation(
     return report
 
 
-def score_answer(item: QAItem, answer: str, results: list[SearchResult]) -> dict:
+def choose_generation_top_k(
+    item: QAItem,
+    top_k: int,
+    adaptive_top_k: bool = False,
+    multi_hop_top_k: int | None = None,
+) -> int:
+    if not adaptive_top_k:
+        return top_k
+    if item.requires_multi_hop:
+        return multi_hop_top_k or max(top_k + 1, 4)
+    return top_k
+
+
+def score_answer(item: QAItem, answer: str, results: list[SearchResult], top_k: int | None = None) -> dict:
     context = " ".join(result.chunk.text for result in results)
     citations = [result.chunk.id for result in results]
     gold = set(item.evidence_ids)
     return {
         "id": item.id,
         "question": item.question,
+        "topic": item.topic,
+        "subtopic": item.subtopic,
+        "difficulty": item.difficulty,
+        "type": item.question_type,
+        "requires_multi_hop": item.requires_multi_hop,
+        "answer_style": item.answer_style,
+        "top_k": top_k if top_k is not None else len(results),
         "gold_answer": item.answer,
         "generated_answer": answer,
         "citations": citations,
@@ -156,10 +183,32 @@ def content_tokens(text: str) -> list[str]:
 
 
 def summarize_generation(rows: list[dict]) -> dict:
+    if not rows:
+        return {"faithfulness": 0.0, "answer_coverage": 0.0, "citation_accuracy": 0.0, "citation_recall": 0.0}
     keys = ("faithfulness", "answer_coverage", "citation_accuracy", "citation_recall")
     return {
         key: round(sum(row[key] for row in rows) / len(rows), 4)
         for key in keys
+    }
+
+
+def summarize_generation_groups(rows: list[dict]) -> dict[str, dict[str, dict]]:
+    return {
+        "by_topic": _summarize_generation_by(rows, "topic"),
+        "by_difficulty": _summarize_generation_by(rows, "difficulty"),
+        "by_type": _summarize_generation_by(rows, "type"),
+        "by_multi_hop": _summarize_generation_by(rows, "requires_multi_hop"),
+        "by_answer_style": _summarize_generation_by(rows, "answer_style"),
+    }
+
+
+def _summarize_generation_by(rows: list[dict], key: str) -> dict[str, dict]:
+    grouped: dict[str, list[dict]] = defaultdict(list)
+    for row in rows:
+        grouped[str(row.get(key, "unknown"))].append(row)
+    return {
+        group: summarize_generation(group_rows) | {"num_questions": len(group_rows)}
+        for group, group_rows in sorted(grouped.items(), key=lambda item: item[0])
     }
 
 
@@ -171,6 +220,8 @@ def write_generation_report(report: dict, path: Path) -> None:
         f"- Generator: `{report['generator']}`",
         f"- Used generators: `{', '.join(report['used_generators'])}`",
         f"- Top-k evidence: `{report['top_k']}`",
+        f"- Adaptive top-k: `{report['adaptive_top_k']}`",
+        f"- Multi-hop top-k: `{report['multi_hop_top_k']}`",
         f"- Questions: `{report['num_questions']}`",
         f"- Limit: `{report['limit']}`",
         "",
@@ -183,9 +234,21 @@ def write_generation_report(report: dict, path: Path) -> None:
         f"| Citation Accuracy | {report['citation_accuracy']:.4f} |",
         f"| Citation Recall | {report['citation_recall']:.4f} |",
         "",
-        "## Sample Outputs",
+        "## Grouped Metrics",
         "",
     ]
+    lines.extend(_generation_group_table(report, "by_answer_style", "Answer Style"))
+    lines.extend(["", ""])
+    lines.extend(_generation_group_table(report, "by_type", "Question Type"))
+    lines.extend(["", ""])
+    lines.extend(_generation_group_table(report, "by_multi_hop", "Requires Multi-hop"))
+    lines.extend(
+        [
+            "",
+        "## Sample Outputs",
+        "",
+        ]
+    )
     for row in report["rows"][:5]:
         lines.extend(
             [
@@ -203,3 +266,19 @@ def write_generation_report(report: dict, path: Path) -> None:
             ]
         )
     path.write_text("\n".join(lines), encoding="utf-8")
+
+
+def _generation_group_table(report: dict, group_key: str, label: str) -> list[str]:
+    lines = [
+        f"### {label}",
+        "",
+        f"| {label} | Questions | Faithfulness | Answer Coverage | Citation Accuracy | Citation Recall |",
+        "|---|---:|---:|---:|---:|---:|",
+    ]
+    for group, metrics in report.get("groups", {}).get(group_key, {}).items():
+        lines.append(
+            f"| {group} | {metrics['num_questions']} | "
+            f"{metrics['faithfulness']:.4f} | {metrics['answer_coverage']:.4f} | "
+            f"{metrics['citation_accuracy']:.4f} | {metrics['citation_recall']:.4f} |"
+        )
+    return lines

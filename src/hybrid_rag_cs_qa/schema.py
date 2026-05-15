@@ -20,6 +20,11 @@ class QAItem:
     evidence_ids: tuple[str, ...]
     difficulty: str
     question_type: str
+    topic: str = "unknown"
+    subtopic: str = "unknown"
+    expected_concepts: tuple[str, ...] = field(default_factory=tuple)
+    requires_multi_hop: bool = False
+    answer_style: str = "unknown"
 
 
 @dataclass(frozen=True)

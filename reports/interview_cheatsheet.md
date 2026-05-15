@@ -2,33 +2,30 @@
 
 ## 30 秒介绍
 
-我做了一个面向计算机课程问答的 Hybrid Self-Reflective GraphRAG 系统。项目包含 34 个课程知识点和 100 条标注问答，比较了 Naive RAG、Hybrid RAG、reranker、GraphRAG 和证据压缩版 GraphRAG。核心结果是：GraphRAG 明显提升召回，但会引入噪声；我进一步加入证据压缩，在几乎保持召回的同时把 Context Precision 从 0.4140 提升到 0.6450。最后我还接入了本地 Ollama Qwen2.5 3B 模型，完成真实 LLM 生成和引用评测。
+我做了一个面向计算机课程问答的成熟 RAG 实验系统。项目从原来的基础 RAG 扩展到 150 个课程文档和 750 条标注 QA，覆盖普通事实问答、改写问法和多跳问题。系统实现了 BM25 + dense 混合检索、GraphRAG 概念扩展、RAPTOR summary tree、Hybrid RAPTOR 融合检索、证据压缩和自适应生成预算。当前最强整体检索方法 `hybrid_raptor` 的 Recall@5 达到 0.9813；面向生成的 `graph_raptor_pruned` 在保持 0.9667 Recall@5 的同时提供更高 Context Precision，并在生成评估中达到 0.9909 Faithfulness 和 0.9687 Citation Recall。
 
 ## 为什么不是普通 RAG
 
-普通 RAG 主要依赖向量相似度，在专业课程里容易漏掉精确术语和多跳概念。我的系统加入 BM25 + dense retrieval 的混合检索，用图谱扩展概念关系，再用 reranker 和证据压缩控制噪声。
+普通 RAG 主要依赖 chunk 级相似度，面对课程问答里的概念改写、多跳线索和跨章节关联时容易漏召回。这个项目同时引入三类补充信号：BM25 保留术语精确匹配，RAPTOR summary tree 提供层次化语义摘要，GraphRAG 提供概念邻接扩展。最后再用证据压缩控制噪声，避免把召回提升直接转化为低质量上下文。
 
-## 最重要的实验结论
+## 最重要实验结论
 
-Graph + Reflection RAG 的 Recall@5 是 0.9400，说明图扩展有效；但 Context Precision 只有 0.4140。Graph + Pruning RAG 的 Recall@5 仍有 0.9367，同时 Context Precision 提升到 0.6450，说明主要矛盾从“召不回来”变成了“如何筛干净”。
+`hybrid_raptor` 是整体检索最强方法：Recall@5 = 0.9813，MRR = 0.9822，NDCG = 0.9723。`graph_raptor_pruned` 是更适合生成的折中方案：Recall@5 = 0.9667，MRR = 0.9833，Context Precision = 0.3864。生成侧使用 `graph_raptor_pruned` + adaptive top-k 后，Faithfulness = 0.9909，Answer Coverage = 0.9814，Citation Recall = 0.9687。
 
-## 可能被问到的问题
+## 可被追问的问题
 
-Q: 为什么 hybrid 没明显超过 naive？
-A: 当前 dense retriever 还是 TF-IDF baseline，语料规模也比较小，BM25 和 TF-IDF 的信号有重叠。后续接 BGE/E5 embedding 后，hybrid 的互补性会更明显。
+Q: 为什么要引入 RAPTOR？
+A: GraphRAG 擅长沿概念关系扩展，但它本身不生成层次化摘要。RAPTOR 可以把底层 chunk 聚类成 summary node，让检索先看到更高层的主题线索，再回落到底层证据，因此更适合处理改写问法和跨 chunk 问题。
 
-Q: 为什么 Citation Accuracy 不是特别高？
-A: GraphRAG 为了提高召回会返回相邻概念证据，部分证据主题相关但不直接支持答案。证据压缩已经把 Citation Accuracy 提升到 0.6450，后续可以用 CrossEncoder reranker 继续优化。
+Q: 为什么还需要 GraphRAG？
+A: RAPTOR 解决的是层次化语义组织，GraphRAG 解决的是显式概念关系。课程问答里很多问题不是同义改写，而是概念之间的依赖或并列关系，所以两者互补。
 
-Q: 项目的创新点是什么？
-A: 不是单纯做 RAG demo，而是围绕课程问答构建了可复现实验闭环：混合检索、概念图扩展、hard-negative reranker、证据压缩、检索评测和生成评测。
+Q: 为什么 `graph_raptor_pruned` 的 Recall 不如 `hybrid_raptor`？
+A: 它是面向生成优化的方法，会主动压缩候选证据，牺牲少量召回换取更干净的上下文。对于最终问答系统，低噪声证据通常比单纯返回更多 chunk 更重要。
 
-Q: 为什么 3B 模型的自动指标不一定比 0.5B 高？
-A: 当前 Faithfulness 和 Coverage 主要基于词面重合。0.5B 更容易直接拼接原文片段，所以指标可能更高，但答案会混入无关内容；3B 回答更自然，词面和标准答案不完全一致，因此指标偏低。这个现象说明我没有只看分数，还做了样例级误差分析。
-
-Q: 本地 Ollama 实验说明了什么？
-A: 它说明系统已经跑通真实 LLM 端到端链路，不只是抽取式 baseline。同时，0.5B/3B 对比暴露了小模型生成、citation 约束和自动指标之间的差异，为后续换更强模型、改 prompt 或引入 LLM-as-judge 提供依据。
+Q: RAPTOR 代码是否直接复制参考项目？
+A: 没有直接照搬。参考项目用于理解聚类、summary 和树构建思想；主项目重新实现了适配本项目 schema、chunk metadata、评估闭环和 CLI 的版本。这样更容易维护，也不会把参考项目的实验假设硬塞进主项目。
 
 ## 简历 bullet
 
-独立完成面向计算机课程问答的 Hybrid Self-Reflective GraphRAG 系统，构建 34 个课程知识点与 100 条标注问答评测集；设计 BM25 + dense retrieval + RRF 融合检索、概念图谱扩展检索、hard-negative 重排序与证据压缩流程，将 Recall@5 从 0.7500 提升到 0.9367，并将 GraphRAG Context Precision 从 0.4140 提升到 0.6450；接入本地 Ollama Qwen2.5 3B 模型，完成真实 LLM 生成、citation 约束与样例误差分析。
+独立构建面向计算机课程问答的 Hybrid GraphRAG + RAPTOR 系统，将数据集扩展到 150 个课程文档和 750 条标注 QA；实现 BM25 + dense RRF 融合检索、GraphRAG 概念扩展、RAPTOR summary tree、Hybrid RAPTOR 检索、证据压缩和自适应生成评估，使整体检索 Recall@5 达到 0.9813，并在生成侧达到 0.9909 Faithfulness、0.9814 Answer Coverage 和 0.9687 Citation Recall。
