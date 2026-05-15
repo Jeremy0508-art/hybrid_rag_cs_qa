@@ -1,4 +1,4 @@
-from hybrid_rag_cs_qa.evaluate import context_precision, mrr, ndcg, recall_at_k, summarize_groups
+from hybrid_rag_cs_qa.evaluate import context_precision, final_context_results, mrr, ndcg, recall_at_k, summarize_groups
 from hybrid_rag_cs_qa.generation import (
     citation_accuracy,
     citation_recall,
@@ -18,6 +18,11 @@ def test_retrieval_metrics():
     assert mrr(retrieved, gold) == 0.5
     assert round(ndcg(retrieved, gold), 4) == 0.3869
     assert context_precision(retrieved, gold) == 1 / 3
+
+
+def test_final_context_results_keep_graph_raptor_pruned_results():
+    results = [SearchResult(Chunk("a", "RAG", "A", "A", ()), 1.0, "test")]
+    assert final_context_results(None, "question", "graph_raptor_pruned", results) == results
 
 
 def test_generation_citation_metrics():

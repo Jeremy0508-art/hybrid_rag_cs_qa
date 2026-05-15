@@ -19,13 +19,15 @@
 
 | Method | Recall@5 | MRR | NDCG | Context Precision |
 |---|---:|---:|---:|---:|
-| naive | 0.9667 | 0.9817 | 0.9638 | 0.2667 |
-| hybrid | 0.9713 | 0.9756 | 0.9635 | 0.2685 |
-| graph_reflect | 0.9773 | 0.9554 | 0.9524 | 0.2709 |
-| raptor | 0.9747 | 0.9763 | 0.9667 | 0.2699 |
-| raptor_topdown | 0.9747 | 0.9757 | 0.9652 | 0.2699 |
-| hybrid_raptor | 0.9813 | 0.9822 | 0.9723 | 0.2725 |
+| naive | 0.9667 | 0.9817 | 0.9638 | 0.4391 |
+| hybrid | 0.9713 | 0.9756 | 0.9635 | 0.4413 |
+| graph_reflect | 0.9773 | 0.9554 | 0.9524 | 0.5307 |
+| raptor | 0.9747 | 0.9763 | 0.9667 | 0.5396 |
+| raptor_topdown | 0.9747 | 0.9757 | 0.9652 | 0.5209 |
+| hybrid_raptor | 0.9813 | 0.9822 | 0.9723 | 0.4400 |
 | graph_raptor_pruned | 0.9667 | 0.9833 | 0.9663 | 0.5353 |
+
+Context Precision is measured on the final evidence context after a common evidence-budget compression step. Recall@5, MRR and NDCG are still measured on the original Top-5 retrieval results.
 
 生成评估，默认 `graph_raptor_pruned` + adaptive top-k：
 

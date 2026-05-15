@@ -93,43 +93,53 @@ This analysis compares per-question retrieval behavior across methods.
 - `expanded-q001-1` What is the core idea of Process and Thread Management Foundations?
   - gold: operating-systems-process-and-thread-management-foundations
   - retrieved: operating-systems-process-and-thread-management-foundations, operating-systems-process-and-thread-management-applications, operating-systems-process-and-thread-management-evaluation, operating-systems-process-and-thread-management-mechanisms, operating-systems-process-and-thread-management-tradeoffs
-  - context_precision: 0.2000
+  - context: operating-systems-process-and-thread-management-foundations, operating-systems-process-and-thread-management-applications, operating-systems-process-and-thread-management-evaluation
+  - context_precision: 0.3333
 - `expanded-q001-2` How does Process and Thread Management Foundations work internally?
   - gold: operating-systems-process-and-thread-management-foundations
   - retrieved: operating-systems-process-and-thread-management-foundations, operating-systems-process-and-thread-management-evaluation, operating-systems-process-and-thread-management-mechanisms, operating-systems-process-and-thread-management-applications, operating-systems-process-and-thread-management-tradeoffs
-  - context_precision: 0.2000
+  - context: operating-systems-process-and-thread-management-foundations, operating-systems-process-and-thread-management-evaluation, operating-systems-process-and-thread-management-mechanisms
+  - context_precision: 0.3333
 - `expanded-q001-3` What tradeoff should be considered for Process and Thread Management Foundations?
   - gold: operating-systems-process-and-thread-management-foundations
   - retrieved: operating-systems-process-and-thread-management-foundations, operating-systems-process-and-thread-management-mechanisms, operating-systems-process-and-thread-management-applications, operating-systems-process-and-thread-management-tradeoffs, operating-systems-process-and-thread-management-evaluation
-  - context_precision: 0.2000
+  - context: operating-systems-process-and-thread-management-foundations, operating-systems-process-and-thread-management-mechanisms, operating-systems-process-and-thread-management-applications
+  - context_precision: 0.3333
+- `expanded-q001-5` Why would the foundations perspective on process and the mechanisms perspective on process need to be combined when answering a grounded systems question?
+  - gold: operating-systems-process-and-thread-management-foundations, operating-systems-process-and-thread-management-mechanisms
+  - retrieved: operating-systems-virtual-memory-and-page-replacement-foundations, operating-systems-virtual-memory-and-page-replacement-mechanisms, operating-systems-process-and-thread-management-foundations, operating-systems-process-and-thread-management-mechanisms, operating-systems-process-and-thread-management-tradeoffs
+  - context: operating-systems-virtual-memory-and-page-replacement-foundations, operating-systems-virtual-memory-and-page-replacement-mechanisms, operating-systems-process-and-thread-management-foundations
+  - context_precision: 0.3333
 - `expanded-q002-1` What is the core idea of Process and Thread Management Mechanisms?
   - gold: operating-systems-process-and-thread-management-mechanisms
   - retrieved: operating-systems-process-and-thread-management-mechanisms, operating-systems-process-and-thread-management-foundations, operating-systems-process-and-thread-management-applications, operating-systems-process-and-thread-management-evaluation, operating-systems-process-and-thread-management-tradeoffs
-  - context_precision: 0.2000
+  - context: operating-systems-process-and-thread-management-mechanisms, operating-systems-process-and-thread-management-foundations, operating-systems-process-and-thread-management-applications
+  - context_precision: 0.3333
 - `expanded-q002-2` How does Process and Thread Management Mechanisms work internally?
   - gold: operating-systems-process-and-thread-management-mechanisms
   - retrieved: operating-systems-process-and-thread-management-mechanisms, operating-systems-process-and-thread-management-evaluation, operating-systems-process-and-thread-management-foundations, operating-systems-process-and-thread-management-tradeoffs, operating-systems-process-and-thread-management-applications
-  - context_precision: 0.2000
+  - context: operating-systems-process-and-thread-management-mechanisms, operating-systems-process-and-thread-management-evaluation, operating-systems-process-and-thread-management-foundations
+  - context_precision: 0.3333
 - `expanded-q002-3` What tradeoff should be considered for Process and Thread Management Mechanisms?
   - gold: operating-systems-process-and-thread-management-mechanisms
   - retrieved: operating-systems-process-and-thread-management-mechanisms, operating-systems-process-and-thread-management-foundations, operating-systems-process-and-thread-management-tradeoffs, operating-systems-process-and-thread-management-applications, operating-systems-process-and-thread-management-evaluation
-  - context_precision: 0.2000
+  - context: operating-systems-process-and-thread-management-mechanisms, operating-systems-process-and-thread-management-foundations, operating-systems-process-and-thread-management-tradeoffs
+  - context_precision: 0.3333
+- `expanded-q002-5` Why would the mechanisms perspective on process and the tradeoffs perspective on process need to be combined when answering a grounded systems question?
+  - gold: operating-systems-process-and-thread-management-mechanisms, operating-systems-process-and-thread-management-tradeoffs
+  - retrieved: operating-systems-virtual-memory-and-page-replacement-tradeoffs, operating-systems-virtual-memory-and-page-replacement-mechanisms, operating-systems-process-and-thread-management-tradeoffs, operating-systems-process-and-thread-management-mechanisms, operating-systems-virtual-memory-and-page-replacement-foundations
+  - context: operating-systems-virtual-memory-and-page-replacement-tradeoffs, operating-systems-virtual-memory-and-page-replacement-mechanisms, operating-systems-process-and-thread-management-tradeoffs
+  - context_precision: 0.3333
 - `expanded-q003-1` What is the core idea of Process and Thread Management Tradeoffs?
   - gold: operating-systems-process-and-thread-management-tradeoffs
   - retrieved: operating-systems-process-and-thread-management-tradeoffs, operating-systems-process-and-thread-management-foundations, operating-systems-process-and-thread-management-applications, operating-systems-process-and-thread-management-evaluation, operating-systems-process-and-thread-management-mechanisms
-  - context_precision: 0.2000
+  - context: operating-systems-process-and-thread-management-tradeoffs, operating-systems-process-and-thread-management-foundations, operating-systems-process-and-thread-management-applications
+  - context_precision: 0.3333
 - `expanded-q003-2` How does Process and Thread Management Tradeoffs work internally?
   - gold: operating-systems-process-and-thread-management-tradeoffs
   - retrieved: operating-systems-process-and-thread-management-tradeoffs, operating-systems-process-and-thread-management-evaluation, operating-systems-process-and-thread-management-foundations, operating-systems-process-and-thread-management-mechanisms, operating-systems-process-and-thread-management-applications
-  - context_precision: 0.2000
-- `expanded-q003-3` What tradeoff should be considered for Process and Thread Management Tradeoffs?
-  - gold: operating-systems-process-and-thread-management-tradeoffs
-  - retrieved: operating-systems-process-and-thread-management-tradeoffs, operating-systems-process-and-thread-management-foundations, operating-systems-process-and-thread-management-mechanisms, operating-systems-process-and-thread-management-applications, operating-systems-process-and-thread-management-evaluation
-  - context_precision: 0.2000
-- `expanded-q004-1` What is the core idea of Process and Thread Management Applications?
-  - gold: operating-systems-process-and-thread-management-applications
-  - retrieved: operating-systems-process-and-thread-management-applications, operating-systems-process-and-thread-management-foundations, operating-systems-process-and-thread-management-evaluation, operating-systems-process-and-thread-management-mechanisms, operating-systems-process-and-thread-management-tradeoffs
-  - context_precision: 0.2000
+  - context: operating-systems-process-and-thread-management-tradeoffs, operating-systems-process-and-thread-management-evaluation, operating-systems-process-and-thread-management-foundations
+  - context_precision: 0.3333
 
 ## Reranker Wins Over Hybrid
 
@@ -176,46 +186,7 @@ This analysis compares per-question retrieval behavior across methods.
 
 ## Pruned GraphRAG Precision Wins
 
-- `expanded-q001-1` What is the core idea of Process and Thread Management Foundations?
-  - gold: operating-systems-process-and-thread-management-foundations
-  - graph: recall=1.0000, mrr=1.0000, retrieved=operating-systems-process-and-thread-management-foundations, operating-systems-process-and-thread-management-applications, operating-systems-process-and-thread-management-evaluation, operating-systems-process-and-thread-management-mechanisms, operating-systems-process-and-thread-management-tradeoffs
-  - pruned: recall=1.0000, mrr=1.0000, retrieved=operating-systems-process-and-thread-management-foundations, operating-systems-process-and-thread-management-applications, operating-systems-process-and-thread-management-evaluation
-- `expanded-q001-2` How does Process and Thread Management Foundations work internally?
-  - gold: operating-systems-process-and-thread-management-foundations
-  - graph: recall=1.0000, mrr=1.0000, retrieved=operating-systems-process-and-thread-management-foundations, operating-systems-process-and-thread-management-evaluation, operating-systems-process-and-thread-management-mechanisms, operating-systems-process-and-thread-management-applications, operating-systems-process-and-thread-management-tradeoffs
-  - pruned: recall=1.0000, mrr=1.0000, retrieved=operating-systems-process-and-thread-management-foundations, operating-systems-process-and-thread-management-evaluation, operating-systems-process-and-thread-management-mechanisms
-- `expanded-q001-3` What tradeoff should be considered for Process and Thread Management Foundations?
-  - gold: operating-systems-process-and-thread-management-foundations
-  - graph: recall=1.0000, mrr=1.0000, retrieved=operating-systems-process-and-thread-management-foundations, operating-systems-process-and-thread-management-mechanisms, operating-systems-process-and-thread-management-applications, operating-systems-process-and-thread-management-tradeoffs, operating-systems-process-and-thread-management-evaluation
-  - pruned: recall=1.0000, mrr=1.0000, retrieved=operating-systems-process-and-thread-management-foundations, operating-systems-process-and-thread-management-mechanisms, operating-systems-process-and-thread-management-applications
-- `expanded-q001-4` Why might Process and Thread Management Foundations and Process and Thread Management Mechanisms both matter in a RAG-style system?
-  - gold: operating-systems-process-and-thread-management-foundations, operating-systems-process-and-thread-management-mechanisms
-  - graph: recall=1.0000, mrr=1.0000, retrieved=operating-systems-process-and-thread-management-mechanisms, operating-systems-process-and-thread-management-foundations, operating-systems-process-and-thread-management-evaluation, operating-systems-process-and-thread-management-applications, operating-systems-process-and-thread-management-tradeoffs
-  - pruned: recall=1.0000, mrr=1.0000, retrieved=operating-systems-process-and-thread-management-mechanisms, operating-systems-process-and-thread-management-foundations, operating-systems-process-and-thread-management-evaluation
-- `expanded-q002-1` What is the core idea of Process and Thread Management Mechanisms?
-  - gold: operating-systems-process-and-thread-management-mechanisms
-  - graph: recall=1.0000, mrr=1.0000, retrieved=operating-systems-process-and-thread-management-mechanisms, operating-systems-process-and-thread-management-foundations, operating-systems-process-and-thread-management-applications, operating-systems-process-and-thread-management-evaluation, operating-systems-process-and-thread-management-tradeoffs
-  - pruned: recall=1.0000, mrr=1.0000, retrieved=operating-systems-process-and-thread-management-mechanisms, operating-systems-process-and-thread-management-foundations, operating-systems-process-and-thread-management-applications
-- `expanded-q002-2` How does Process and Thread Management Mechanisms work internally?
-  - gold: operating-systems-process-and-thread-management-mechanisms
-  - graph: recall=1.0000, mrr=1.0000, retrieved=operating-systems-process-and-thread-management-mechanisms, operating-systems-process-and-thread-management-evaluation, operating-systems-process-and-thread-management-foundations, operating-systems-process-and-thread-management-tradeoffs, operating-systems-process-and-thread-management-applications
-  - pruned: recall=1.0000, mrr=1.0000, retrieved=operating-systems-process-and-thread-management-mechanisms, operating-systems-process-and-thread-management-evaluation, operating-systems-process-and-thread-management-foundations
-- `expanded-q002-3` What tradeoff should be considered for Process and Thread Management Mechanisms?
-  - gold: operating-systems-process-and-thread-management-mechanisms
-  - graph: recall=1.0000, mrr=1.0000, retrieved=operating-systems-process-and-thread-management-mechanisms, operating-systems-process-and-thread-management-foundations, operating-systems-process-and-thread-management-tradeoffs, operating-systems-process-and-thread-management-applications, operating-systems-process-and-thread-management-evaluation
-  - pruned: recall=1.0000, mrr=1.0000, retrieved=operating-systems-process-and-thread-management-mechanisms, operating-systems-process-and-thread-management-foundations, operating-systems-process-and-thread-management-tradeoffs
-- `expanded-q002-4` Why might Process and Thread Management Mechanisms and Process and Thread Management Tradeoffs both matter in a RAG-style system?
-  - gold: operating-systems-process-and-thread-management-mechanisms, operating-systems-process-and-thread-management-tradeoffs
-  - graph: recall=1.0000, mrr=1.0000, retrieved=operating-systems-process-and-thread-management-mechanisms, operating-systems-process-and-thread-management-tradeoffs, operating-systems-process-and-thread-management-foundations, operating-systems-process-and-thread-management-evaluation, operating-systems-process-and-thread-management-applications
-  - pruned: recall=1.0000, mrr=1.0000, retrieved=operating-systems-process-and-thread-management-mechanisms, operating-systems-process-and-thread-management-tradeoffs, operating-systems-process-and-thread-management-foundations
-- `expanded-q003-1` What is the core idea of Process and Thread Management Tradeoffs?
-  - gold: operating-systems-process-and-thread-management-tradeoffs
-  - graph: recall=1.0000, mrr=1.0000, retrieved=operating-systems-process-and-thread-management-tradeoffs, operating-systems-process-and-thread-management-foundations, operating-systems-process-and-thread-management-applications, operating-systems-process-and-thread-management-evaluation, operating-systems-process-and-thread-management-mechanisms
-  - pruned: recall=1.0000, mrr=1.0000, retrieved=operating-systems-process-and-thread-management-tradeoffs, operating-systems-process-and-thread-management-foundations, operating-systems-process-and-thread-management-applications
-- `expanded-q003-2` How does Process and Thread Management Tradeoffs work internally?
-  - gold: operating-systems-process-and-thread-management-tradeoffs
-  - graph: recall=1.0000, mrr=1.0000, retrieved=operating-systems-process-and-thread-management-tradeoffs, operating-systems-process-and-thread-management-evaluation, operating-systems-process-and-thread-management-foundations, operating-systems-process-and-thread-management-mechanisms, operating-systems-process-and-thread-management-applications
-  - pruned: recall=1.0000, mrr=1.0000, retrieved=operating-systems-process-and-thread-management-tradeoffs, operating-systems-process-and-thread-management-evaluation, operating-systems-process-and-thread-management-foundations
+No cases found.
 
 ## Remaining Misses
 

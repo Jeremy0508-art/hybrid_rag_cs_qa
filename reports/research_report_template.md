@@ -86,17 +86,17 @@ pytest -q
 
 | Method | Recall@5 | MRR | NDCG | Context Precision |
 |---|---:|---:|---:|---:|
-| naive | 0.9667 | 0.9817 | 0.9638 | 0.2667 |
-| hybrid | 0.9713 | 0.9756 | 0.9635 | 0.2685 |
-| hybrid_rerank | 0.9680 | 0.9337 | 0.9352 | 0.2672 |
-| graph_reflect | 0.9773 | 0.9554 | 0.9524 | 0.2709 |
+| naive | 0.9667 | 0.9817 | 0.9638 | 0.4391 |
+| hybrid | 0.9713 | 0.9756 | 0.9635 | 0.4413 |
+| hybrid_rerank | 0.9680 | 0.9337 | 0.9352 | 0.5124 |
+| graph_reflect | 0.9773 | 0.9554 | 0.9524 | 0.5307 |
 | graph_pruned | 0.9427 | 0.9518 | 0.9347 | 0.4309 |
-| raptor | 0.9747 | 0.9763 | 0.9667 | 0.2699 |
-| raptor_topdown | 0.9747 | 0.9757 | 0.9652 | 0.2699 |
-| hybrid_raptor | 0.9813 | 0.9822 | 0.9723 | 0.2725 |
+| raptor | 0.9747 | 0.9763 | 0.9667 | 0.5396 |
+| raptor_topdown | 0.9747 | 0.9757 | 0.9652 | 0.5209 |
+| hybrid_raptor | 0.9813 | 0.9822 | 0.9723 | 0.4400 |
 | graph_raptor_pruned | 0.9667 | 0.9833 | 0.9663 | 0.5353 |
 
-`hybrid_raptor` 说明 RAPTOR 与 GraphRAG 融合后能提升整体召回和排序质量。`graph_raptor_pruned` 的 Recall@5 略低，但 Context Precision 更高，说明证据压缩有效减少了最终上下文中的噪声。
+`hybrid_raptor` 说明 RAPTOR 与 GraphRAG 融合后能提升整体召回和排序质量。Context Precision 统一在最终 evidence context 上计算，因此各方法都经过相同的证据预算压缩；`graph_raptor_pruned` 仍是最适合作为生成入口的方案。
 
 ## 6. 生成结果
 

@@ -31,6 +31,8 @@ def evaluate(corpus_path: Path, qa_path: Path, reranker_path: Path, out_path: Pa
         for item in qa_items:
             results = pipeline.search(item.question, method=method, top_k=top_k)
             retrieved = [r.chunk.id for r in results]
+            context_results = final_context_results(pipeline, item.question, method, results)
+            context_ids = [r.chunk.id for r in context_results]
             gold_ids = list(item.evidence_ids)
             gold = set(gold_ids)
             rows.append(
@@ -45,11 +47,12 @@ def evaluate(corpus_path: Path, qa_path: Path, reranker_path: Path, out_path: Pa
                     "expected_concepts": list(item.expected_concepts),
                     "answer_style": item.answer_style,
                     "retrieved": retrieved,
+                    "context": context_ids,
                     "gold": gold_ids,
                     "recall": recall_at_k(retrieved, gold),
                     "mrr": mrr(retrieved, gold),
                     "ndcg": ndcg(retrieved, gold),
-                    "context_precision": context_precision(retrieved, gold),
+                    "context_precision": context_precision(context_ids, gold),
                 }
             )
         report[method] = summarize(rows)
@@ -84,6 +87,12 @@ def context_precision(retrieved: list[str], gold: set[str]) -> float:
     if not retrieved:
         return 0.0
     return len(set(retrieved) & gold) / len(retrieved)
+
+
+def final_context_results(pipeline: RagPipeline, question: str, method: str, results: list) -> list:
+    if method == "graph_raptor_pruned":
+        return results
+    return pipeline._compress_evidence(question, results, max_results=min(3, len(results)))
 
 
 def summarize(rows: list[dict]) -> dict:
@@ -130,7 +139,16 @@ def write_markdown_report(report: dict, path: Path) -> None:
             f"| {method} | {metrics['recall']:.4f} | {metrics['mrr']:.4f} | "
             f"{metrics['ndcg']:.4f} | {metrics['context_precision']:.4f} |"
         )
-    lines.extend(["", "## Grouped Metrics", ""])
+    lines.extend(
+        [
+            "",
+            "Context Precision is measured on the final evidence context after a common evidence-budget compression step. "
+            "Recall@5, MRR and NDCG are still measured on the original Top-5 retrieval results.",
+            "",
+            "## Grouped Metrics",
+            "",
+        ]
+    )
     lines.extend(_group_table(report, "by_topic", "Topic"))
     lines.extend(["", ""])
     lines.extend(_group_table(report, "by_type", "Question Type"))
@@ -221,6 +239,7 @@ def write_error_analysis(report: dict, path: Path) -> None:
                 f"- `{qid}` {row['question']}",
                 f"  - gold: {', '.join(row['gold'])}",
                 f"  - retrieved: {', '.join(row['retrieved'])}",
+                f"  - context: {', '.join(row.get('context', row['retrieved']))}",
                 f"  - context_precision: {row['context_precision']:.4f}",
             ]
         )

@@ -59,8 +59,8 @@ pytest -q
 
 | Method | Recall@5 | MRR | NDCG | Context Precision |
 |---|---:|---:|---:|---:|
-| naive | 0.9667 | 0.9817 | 0.9638 | 0.2667 |
-| hybrid_raptor | 0.9813 | 0.9822 | 0.9723 | 0.2725 |
+| naive | 0.9667 | 0.9817 | 0.9638 | 0.4391 |
+| hybrid_raptor | 0.9813 | 0.9822 | 0.9723 | 0.4400 |
 | graph_raptor_pruned | 0.9667 | 0.9833 | 0.9663 | 0.5353 |
 
 | Generator Setup | Faithfulness | Answer Coverage | Citation Accuracy | Citation Recall |
