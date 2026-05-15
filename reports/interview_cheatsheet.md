@@ -10,7 +10,7 @@
 
 ## 最重要实验结论
 
-`hybrid_raptor` 是整体检索最强方法：Recall@5 = 0.9813，MRR = 0.9822，NDCG = 0.9723。`graph_raptor_pruned` 是更适合生成的折中方案：Recall@5 = 0.9667，MRR = 0.9833，Context Precision = 0.3864。生成侧使用 `graph_raptor_pruned` + adaptive top-k 后，Faithfulness = 0.9909，Answer Coverage = 0.9814，Citation Recall = 0.9687。
+`hybrid_raptor` 是整体检索最强方法：Recall@5 = 0.9813，MRR = 0.9822，NDCG = 0.9723。`graph_raptor_pruned` 是更适合生成的折中方案：Recall@5 = 0.9667，MRR = 0.9833，Context Precision = 0.5353。生成侧使用 `graph_raptor_pruned` + adaptive top-k 后，Faithfulness = 0.9909，Answer Coverage = 0.9814，Citation Recall = 0.9687。
 
 ## 可被追问的问题
 

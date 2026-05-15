@@ -1,6 +1,7 @@
 from pathlib import Path
 
 from hybrid_rag_cs_qa.pipeline import RagPipeline
+from hybrid_rag_cs_qa.schema import Chunk, SearchResult
 
 
 def test_pipeline_methods_return_results():
@@ -52,3 +53,31 @@ def test_pipeline_default_search_uses_graph_raptor_pruned():
     )
 
     assert [result.chunk.id for result in default] == [result.chunk.id for result in explicit]
+
+
+def test_adaptive_evidence_compression_stops_after_dominant_top_result():
+    top = Chunk("top", "RAG", "GraphRAG", "GraphRAG improves recall.", ("GraphRAG",))
+    weak = Chunk("weak", "RAG", "Dense Retrieval", "Dense retrieval uses embeddings.", ("Embedding",))
+    results = [
+        SearchResult(top, 1.0, "test"),
+        SearchResult(weak, 0.5, "test"),
+    ]
+
+    compressed = RagPipeline._compress_evidence_adaptive("Why does GraphRAG improve recall?", results, max_results=3)
+
+    assert [result.chunk.id for result in compressed] == ["top"]
+
+
+def test_adaptive_evidence_compression_keeps_close_second_result():
+    top = Chunk("top", "RAG", "GraphRAG", "GraphRAG improves recall.", ("GraphRAG",))
+    second = Chunk("second", "RAG", "GraphRAG Tradeoffs", "GraphRAG can reduce context precision.", ("GraphRAG",))
+    third = Chunk("third", "RAG", "Dense Retrieval", "Dense retrieval uses embeddings.", ("Embedding",))
+    results = [
+        SearchResult(top, 1.0, "test"),
+        SearchResult(second, 0.8, "test"),
+        SearchResult(third, 0.7, "test"),
+    ]
+
+    compressed = RagPipeline._compress_evidence_adaptive("Why does GraphRAG improve recall?", results, max_results=3)
+
+    assert [result.chunk.id for result in compressed] == ["top", "second"]

@@ -25,13 +25,13 @@
 | raptor | 0.9747 | 0.9763 | 0.9667 | 0.2699 |
 | raptor_topdown | 0.9747 | 0.9757 | 0.9652 | 0.2699 |
 | hybrid_raptor | 0.9813 | 0.9822 | 0.9723 | 0.2725 |
-| graph_raptor_pruned | 0.9667 | 0.9833 | 0.9663 | 0.3864 |
+| graph_raptor_pruned | 0.9667 | 0.9833 | 0.9663 | 0.5353 |
 
 生成评估，默认 `graph_raptor_pruned` + adaptive top-k：
 
 | Faithfulness | Answer Coverage | Citation Accuracy | Citation Recall |
 |---:|---:|---:|---:|
-| 0.9909 | 0.9814 | 0.4065 | 0.9687 |
+| 0.9909 | 0.9814 | 0.4730 | 0.9687 |
 
 主要结论：`hybrid_raptor` 是整体召回和排序最强的检索方法；`graph_raptor_pruned` 更适合作为生成入口，因为它用少量召回换取更干净的最终证据上下文。
 

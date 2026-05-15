@@ -15,7 +15,7 @@
 |---|---:|
 | Faithfulness | 0.9909 |
 | Answer Coverage | 0.9814 |
-| Citation Accuracy | 0.4065 |
+| Citation Accuracy | 0.4730 |
 | Citation Recall | 0.9687 |
 
 ## Grouped Metrics
@@ -24,7 +24,7 @@
 
 | Answer Style | Questions | Faithfulness | Answer Coverage | Citation Accuracy | Citation Recall |
 |---|---:|---:|---:|---:|---:|
-| citation-grounded | 450 | 0.9909 | 1.0000 | 0.3703 | 1.0000 |
+| citation-grounded | 450 | 0.9909 | 1.0000 | 0.4811 | 1.0000 |
 | paraphrase | 150 | 0.9909 | 0.9490 | 0.4467 | 0.8933 |
 | title-explicit | 150 | 0.9909 | 0.9581 | 0.4750 | 0.9500 |
 
@@ -33,9 +33,9 @@
 
 | Question Type | Questions | Faithfulness | Answer Coverage | Citation Accuracy | Citation Recall |
 |---|---:|---:|---:|---:|---:|
-| comparison | 150 | 0.9909 | 1.0000 | 0.3822 | 1.0000 |
-| definition | 150 | 0.9909 | 1.0000 | 0.3811 | 1.0000 |
-| mechanism | 150 | 0.9909 | 1.0000 | 0.3477 | 1.0000 |
+| comparison | 150 | 0.9909 | 1.0000 | 0.4989 | 1.0000 |
+| definition | 150 | 0.9909 | 1.0000 | 0.5266 | 1.0000 |
+| mechanism | 150 | 0.9909 | 1.0000 | 0.4178 | 1.0000 |
 | multi_hop | 150 | 0.9909 | 0.9581 | 0.4750 | 0.9500 |
 | multi_hop_paraphrase | 150 | 0.9909 | 0.9490 | 0.4467 | 0.8933 |
 
@@ -44,7 +44,7 @@
 
 | Requires Multi-hop | Questions | Faithfulness | Answer Coverage | Citation Accuracy | Citation Recall |
 |---|---:|---:|---:|---:|---:|
-| False | 450 | 0.9909 | 1.0000 | 0.3703 | 1.0000 |
+| False | 450 | 0.9909 | 1.0000 | 0.4811 | 1.0000 |
 | True | 300 | 0.9909 | 0.9536 | 0.4608 | 0.9217 |
 
 ## Sample Outputs

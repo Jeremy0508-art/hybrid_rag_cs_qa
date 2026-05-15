@@ -60,9 +60,9 @@ class RagPipeline:
         if method == "graph_raptor_pruned":
             candidates = self._graph_raptor_candidates(question, candidate_k)
             if is_multi_hop_question(question):
-                return self._compress_evidence(question, candidates, max_results=min(4, top_k))
+                return self._compress_evidence_adaptive(question, candidates, max_results=min(4, top_k))
             reranked = self.reranker.rerank(question, candidates, candidate_k) if self.reranker else candidates
-            return self._compress_evidence(question, reranked, max_results=min(3, top_k))
+            return self._compress_evidence_adaptive(question, reranked, max_results=min(3, top_k))
         raise ValueError(f"Unknown method: {method}")
 
     def answer_extractive(
@@ -152,3 +152,24 @@ class RagPipeline:
                 compressed.append(result)
                 seen_courses.add(result.chunk.course)
         return compressed
+
+    @classmethod
+    def _compress_evidence_adaptive(
+        cls,
+        question: str,
+        results: list[SearchResult],
+        max_results: int = 3,
+        dominant_gap_ratio: float = 0.75,
+        weak_third_ratio: float = 0.90,
+    ) -> list[SearchResult]:
+        if not results:
+            return []
+
+        budget = max_results
+        best_score = max(results[0].score, 1e-9)
+        if len(results) >= 2 and results[1].score / best_score < dominant_gap_ratio:
+            budget = 1
+        elif max_results <= 3 and len(results) >= 3 and results[2].score / best_score < weak_third_ratio:
+            budget = min(budget, 2)
+
+        return cls._compress_evidence(question, results, max_results=budget)

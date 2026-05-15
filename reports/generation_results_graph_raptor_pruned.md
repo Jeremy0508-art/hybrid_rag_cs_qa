@@ -3,7 +3,9 @@
 - Method: `graph_raptor_pruned`
 - Generator: `extractive`
 - Used generators: `extractive`
-- Top-k evidence: `4`
+- Top-k evidence: `3`
+- Adaptive top-k: `False`
+- Multi-hop top-k: `None`
 - Questions: `750`
 - Limit: `None`
 
@@ -12,9 +14,9 @@
 | Metric | Score |
 |---|---:|
 | Faithfulness | 0.9909 |
-| Answer Coverage | 0.9814 |
-| Citation Accuracy | 0.3916 |
-| Citation Recall | 0.9687 |
+| Answer Coverage | 0.9729 |
+| Citation Accuracy | 0.5267 |
+| Citation Recall | 0.9507 |
 
 ## Grouped Metrics
 
@@ -22,28 +24,28 @@
 
 | Answer Style | Questions | Faithfulness | Answer Coverage | Citation Accuracy | Citation Recall |
 |---|---:|---:|---:|---:|---:|
-| citation-grounded | 450 | 0.9909 | 1.0000 | 0.3455 | 1.0000 |
-| paraphrase | 150 | 0.9909 | 0.9490 | 0.4467 | 0.8933 |
-| title-explicit | 150 | 0.9909 | 0.9581 | 0.4750 | 0.9500 |
+| citation-grounded | 450 | 0.9909 | 1.0000 | 0.4811 | 1.0000 |
+| paraphrase | 150 | 0.9909 | 0.9043 | 0.5589 | 0.8100 |
+| title-explicit | 150 | 0.9909 | 0.9604 | 0.6311 | 0.9433 |
 
 
 ### Question Type
 
 | Question Type | Questions | Faithfulness | Answer Coverage | Citation Accuracy | Citation Recall |
 |---|---:|---:|---:|---:|---:|
-| comparison | 150 | 0.9909 | 1.0000 | 0.3477 | 1.0000 |
-| definition | 150 | 0.9909 | 1.0000 | 0.3455 | 1.0000 |
-| mechanism | 150 | 0.9909 | 1.0000 | 0.3433 | 1.0000 |
-| multi_hop | 150 | 0.9909 | 0.9581 | 0.4750 | 0.9500 |
-| multi_hop_paraphrase | 150 | 0.9909 | 0.9490 | 0.4467 | 0.8933 |
+| comparison | 150 | 0.9909 | 1.0000 | 0.4989 | 1.0000 |
+| definition | 150 | 0.9909 | 1.0000 | 0.5266 | 1.0000 |
+| mechanism | 150 | 0.9909 | 1.0000 | 0.4178 | 1.0000 |
+| multi_hop | 150 | 0.9909 | 0.9604 | 0.6311 | 0.9433 |
+| multi_hop_paraphrase | 150 | 0.9909 | 0.9043 | 0.5589 | 0.8100 |
 
 
 ### Requires Multi-hop
 
 | Requires Multi-hop | Questions | Faithfulness | Answer Coverage | Citation Accuracy | Citation Recall |
 |---|---:|---:|---:|---:|---:|
-| False | 450 | 0.9909 | 1.0000 | 0.3455 | 1.0000 |
-| True | 300 | 0.9909 | 0.9536 | 0.4608 | 0.9217 |
+| False | 450 | 0.9909 | 1.0000 | 0.4811 | 1.0000 |
+| True | 300 | 0.9909 | 0.9324 | 0.5950 | 0.8767 |
 
 ## Sample Outputs
 
@@ -76,13 +78,13 @@
 - Question: Why might Process and Thread Management Foundations and Process and Thread Management Mechanisms both matter in a RAG-style system?
 - Generated: A process owns an address space and operating system resources, while a thread is the schedulable execution unit inside a process. The kernel records process control blocks, thread state, registers, stacks, and scheduling metadata to pause and resume execution. Threads reduce switching overhead because they share memory, but shared memory also increases synchronization risk. A browser may isolate tabs as processes while using multiple threads inside each tab for rendering, networking, and scripting. The foundations view of Process and Thread Management defines the core vocabulary and the baseline mental model. Important concepts include process, thread, context switch, scheduler. In a RAG benchmark, this passage should be treated as evidence for questions about Process and Thread Management, especially when the question asks about foundations. [operating-systems-process-and-thread-management-foundations]A process owns an address space and operating system resources, while a thread is the schedulable execution unit inside a process. The kernel records process control blocks, thread state, registers, stacks, and scheduling metadata to pause and resume execution. Threads reduce switching overhead because they share memory, but shared memory also increases synchronization risk. A browser may isolate tabs as processes while using multiple threads inside each tab for rendering, networking, and scripting. The mechanisms view of Process and Thread Management explains the internal steps and the conditions that make the idea work. Important concepts include process, thread, context switch, scheduler. In a RAG benchmark, this passage should be treated as evidence for questions about Process and Thread Management, especially when the question asks about mechanisms. [operating-systems-process-and-thread-management-mechanisms]A process owns an address space and operating system resources, while a thread is the schedulable execution unit inside a process. The kernel records process control blocks, thread state, registers, stacks, and scheduling metadata to pause and resume execution. Threads reduce switching overhead because they share memory, but shared memory also increases synchronization risk. A browser may isolate tabs as processes while using multiple threads inside each tab for rendering, networking, and scripting. The tradeoffs view of Process and Thread Management compares benefits, costs, failure modes, and design alternatives. Important concepts include process, thread, context switch, scheduler. In a RAG benchmark, this passage should be treated as evidence for questions about Process and Thread Management, especially when the question asks about tradeoffs. [operating-systems-process-and-thread-management-tradeoffs]
 - Gold: A browser may isolate tabs as processes while using multiple threads inside each tab for rendering, networking, and scripting. A browser may isolate tabs as processes while using multiple threads inside each tab for rendering, networking, and scripting.
-- Citations: operating-systems-process-and-thread-management-foundations, operating-systems-process-and-thread-management-mechanisms, operating-systems-process-and-thread-management-tradeoffs, operating-systems-process-and-thread-management-applications
-- Scores: faithfulness=0.9920, coverage=1.0000, citation_accuracy=0.5000, citation_recall=1.0000
+- Citations: operating-systems-process-and-thread-management-foundations, operating-systems-process-and-thread-management-mechanisms, operating-systems-process-and-thread-management-tradeoffs
+- Scores: faithfulness=0.9920, coverage=1.0000, citation_accuracy=0.6667, citation_recall=1.0000
 
 ### expanded-q001-5
 
 - Question: Why would the foundations perspective on process and the mechanisms perspective on process need to be combined when answering a grounded systems question?
-- Generated: A process owns an address space and operating system resources, while a thread is the schedulable execution unit inside a process. The kernel records process control blocks, thread state, registers, stacks, and scheduling metadata to pause and resume execution. Threads reduce switching overhead because they share memory, but shared memory also increases synchronization risk. A browser may isolate tabs as processes while using multiple threads inside each tab for rendering, networking, and scripting. The mechanisms view of Process and Thread Management explains the internal steps and the conditions that make the idea work. Important concepts include process, thread, context switch, scheduler. In a RAG benchmark, this passage should be treated as evidence for questions about Process and Thread Management, especially when the question asks about mechanisms. [operating-systems-process-and-thread-management-mechanisms]A process owns an address space and operating system resources, while a thread is the schedulable execution unit inside a process. The kernel records process control blocks, thread state, registers, stacks, and scheduling metadata to pause and resume execution. Threads reduce switching overhead because they share memory, but shared memory also increases synchronization risk. A browser may isolate tabs as processes while using multiple threads inside each tab for rendering, networking, and scripting. The foundations view of Process and Thread Management defines the core vocabulary and the baseline mental model. Important concepts include process, thread, context switch, scheduler. In a RAG benchmark, this passage should be treated as evidence for questions about Process and Thread Management, especially when the question asks about foundations. [operating-systems-process-and-thread-management-foundations]A process owns an address space and operating system resources, while a thread is the schedulable execution unit inside a process. The kernel records process control blocks, thread state, registers, stacks, and scheduling metadata to pause and resume execution. Threads reduce switching overhead because they share memory, but shared memory also increases synchronization risk. A browser may isolate tabs as processes while using multiple threads inside each tab for rendering, networking, and scripting. The applications view of Process and Thread Management connects the idea to realistic engineering and exam-style scenarios. Important concepts include process, thread, context switch, scheduler. In a RAG benchmark, this passage should be treated as evidence for questions about Process and Thread Management, especially when the question asks about applications. [operating-systems-process-and-thread-management-applications]
+- Generated: A process owns an address space and operating system resources, while a thread is the schedulable execution unit inside a process. The kernel records process control blocks, thread state, registers, stacks, and scheduling metadata to pause and resume execution. Threads reduce switching overhead because they share memory, but shared memory also increases synchronization risk. A browser may isolate tabs as processes while using multiple threads inside each tab for rendering, networking, and scripting. The mechanisms view of Process and Thread Management explains the internal steps and the conditions that make the idea work. Important concepts include process, thread, context switch, scheduler. In a RAG benchmark, this passage should be treated as evidence for questions about Process and Thread Management, especially when the question asks about mechanisms. [operating-systems-process-and-thread-management-mechanisms]A process owns an address space and operating system resources, while a thread is the schedulable execution unit inside a process. The kernel records process control blocks, thread state, registers, stacks, and scheduling metadata to pause and resume execution. Threads reduce switching overhead because they share memory, but shared memory also increases synchronization risk. A browser may isolate tabs as processes while using multiple threads inside each tab for rendering, networking, and scripting. The foundations view of Process and Thread Management defines the core vocabulary and the baseline mental model. Important concepts include process, thread, context switch, scheduler. In a RAG benchmark, this passage should be treated as evidence for questions about Process and Thread Management, especially when the question asks about foundations. [operating-systems-process-and-thread-management-foundations]
 - Gold: A browser may isolate tabs as processes while using multiple threads inside each tab for rendering, networking, and scripting. A browser may isolate tabs as processes while using multiple threads inside each tab for rendering, networking, and scripting.
-- Citations: operating-systems-process-and-thread-management-mechanisms, operating-systems-process-and-thread-management-foundations, operating-systems-process-and-thread-management-applications, operating-systems-process-and-thread-management-tradeoffs
-- Scores: faithfulness=0.9920, coverage=1.0000, citation_accuracy=0.5000, citation_recall=1.0000
+- Citations: operating-systems-process-and-thread-management-mechanisms, operating-systems-process-and-thread-management-foundations
+- Scores: faithfulness=0.9920, coverage=1.0000, citation_accuracy=1.0000, citation_recall=1.0000

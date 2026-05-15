@@ -12,7 +12,7 @@
 | raptor | 0.9747 | 0.9763 | 0.9667 | 0.2699 |
 | raptor_topdown | 0.9747 | 0.9757 | 0.9652 | 0.2699 |
 | hybrid_raptor | 0.9813 | 0.9822 | 0.9723 | 0.2725 |
-| graph_raptor_pruned | 0.9667 | 0.9833 | 0.9663 | 0.3864 |
+| graph_raptor_pruned | 0.9667 | 0.9833 | 0.9663 | 0.5353 |
 
 ## Grouped Metrics
 
@@ -68,12 +68,12 @@
 | Information Retrieval | hybrid_raptor | 100 | 0.9850 | 0.9900 | 0.9791 | 0.2740 |
 | Operating Systems | hybrid_raptor | 150 | 0.9867 | 0.9900 | 0.9802 | 0.2747 |
 | RAG Systems | hybrid_raptor | 100 | 0.9800 | 0.9900 | 0.9775 | 0.2720 |
-| Compilers | graph_raptor_pruned | 125 | 0.9720 | 0.9920 | 0.9741 | 0.3873 |
-| Computer Networks | graph_raptor_pruned | 150 | 0.9633 | 0.9789 | 0.9627 | 0.3817 |
-| Databases | graph_raptor_pruned | 125 | 0.9560 | 0.9667 | 0.9509 | 0.3887 |
-| Information Retrieval | graph_raptor_pruned | 100 | 0.9650 | 0.9900 | 0.9676 | 0.3908 |
-| Operating Systems | graph_raptor_pruned | 150 | 0.9667 | 0.9900 | 0.9697 | 0.3833 |
-| RAG Systems | graph_raptor_pruned | 100 | 0.9800 | 0.9833 | 0.9749 | 0.3900 |
+| Compilers | graph_raptor_pruned | 125 | 0.9720 | 0.9920 | 0.9741 | 0.5300 |
+| Computer Networks | graph_raptor_pruned | 150 | 0.9633 | 0.9789 | 0.9627 | 0.4928 |
+| Databases | graph_raptor_pruned | 125 | 0.9560 | 0.9667 | 0.9509 | 0.5380 |
+| Information Retrieval | graph_raptor_pruned | 100 | 0.9650 | 0.9900 | 0.9676 | 0.5825 |
+| Operating Systems | graph_raptor_pruned | 150 | 0.9667 | 0.9900 | 0.9697 | 0.5767 |
+| RAG Systems | graph_raptor_pruned | 100 | 0.9800 | 0.9833 | 0.9749 | 0.4933 |
 
 
 ### Question Type
@@ -120,9 +120,9 @@
 | mechanism | hybrid_raptor | 150 | 1.0000 | 1.0000 | 1.0000 | 0.2000 |
 | multi_hop | hybrid_raptor | 150 | 0.9933 | 1.0000 | 0.9776 | 0.3973 |
 | multi_hop_paraphrase | hybrid_raptor | 150 | 0.9133 | 0.9108 | 0.8840 | 0.3653 |
-| comparison | graph_raptor_pruned | 150 | 1.0000 | 1.0000 | 1.0000 | 0.3444 |
-| definition | graph_raptor_pruned | 150 | 1.0000 | 1.0000 | 1.0000 | 0.3333 |
-| mechanism | graph_raptor_pruned | 150 | 1.0000 | 1.0000 | 1.0000 | 0.3378 |
+| comparison | graph_raptor_pruned | 150 | 1.0000 | 1.0000 | 1.0000 | 0.5944 |
+| definition | graph_raptor_pruned | 150 | 1.0000 | 1.0000 | 1.0000 | 0.6111 |
+| mechanism | graph_raptor_pruned | 150 | 1.0000 | 1.0000 | 1.0000 | 0.5544 |
 | multi_hop | graph_raptor_pruned | 150 | 0.9467 | 0.9967 | 0.9562 | 0.4733 |
 | multi_hop_paraphrase | graph_raptor_pruned | 150 | 0.8867 | 0.9200 | 0.8754 | 0.4433 |
 
@@ -155,9 +155,9 @@
 | easy | hybrid_raptor | 150 | 1.0000 | 1.0000 | 1.0000 | 0.2000 |
 | hard | hybrid_raptor | 300 | 0.9533 | 0.9554 | 0.9308 | 0.3813 |
 | medium | hybrid_raptor | 300 | 1.0000 | 1.0000 | 1.0000 | 0.2000 |
-| easy | graph_raptor_pruned | 150 | 1.0000 | 1.0000 | 1.0000 | 0.3333 |
+| easy | graph_raptor_pruned | 150 | 1.0000 | 1.0000 | 1.0000 | 0.6111 |
 | hard | graph_raptor_pruned | 300 | 0.9167 | 0.9583 | 0.9158 | 0.4583 |
-| medium | graph_raptor_pruned | 300 | 1.0000 | 1.0000 | 1.0000 | 0.3411 |
+| medium | graph_raptor_pruned | 300 | 1.0000 | 1.0000 | 1.0000 | 0.5744 |
 
 
 ### Requires Multi-hop
@@ -180,7 +180,7 @@
 | True | raptor_topdown | 300 | 0.9367 | 0.9393 | 0.9129 | 0.3747 |
 | False | hybrid_raptor | 450 | 1.0000 | 1.0000 | 1.0000 | 0.2000 |
 | True | hybrid_raptor | 300 | 0.9533 | 0.9554 | 0.9308 | 0.3813 |
-| False | graph_raptor_pruned | 450 | 1.0000 | 1.0000 | 1.0000 | 0.3385 |
+| False | graph_raptor_pruned | 450 | 1.0000 | 1.0000 | 1.0000 | 0.5867 |
 | True | graph_raptor_pruned | 300 | 0.9167 | 0.9583 | 0.9158 | 0.4583 |
 
 
@@ -212,7 +212,7 @@
 | citation-grounded | hybrid_raptor | 450 | 1.0000 | 1.0000 | 1.0000 | 0.2000 |
 | paraphrase | hybrid_raptor | 150 | 0.9133 | 0.9108 | 0.8840 | 0.3653 |
 | title-explicit | hybrid_raptor | 150 | 0.9933 | 1.0000 | 0.9776 | 0.3973 |
-| citation-grounded | graph_raptor_pruned | 450 | 1.0000 | 1.0000 | 1.0000 | 0.3385 |
+| citation-grounded | graph_raptor_pruned | 450 | 1.0000 | 1.0000 | 1.0000 | 0.5867 |
 | paraphrase | graph_raptor_pruned | 150 | 0.8867 | 0.9200 | 0.8754 | 0.4433 |
 | title-explicit | graph_raptor_pruned | 150 | 0.9467 | 0.9967 | 0.9562 | 0.4733 |
 

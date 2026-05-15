@@ -4,7 +4,7 @@
 
 本文研究计算机课程问答场景中的检索增强生成问题。针对普通 chunk 相似度检索在精确术语、改写问法、多跳线索和引用质量方面的不足，项目构建了一个可复现的 Hybrid GraphRAG + RAPTOR 系统。系统包含 150 个课程文档和 750 条标注 QA，覆盖操作系统、计算机网络、数据库、编译原理和 RAG 方法论等主题。方法上，系统融合 BM25 + dense retrieval、课程概念图扩展、RAPTOR summary tree、Hybrid RAPTOR 候选融合、证据压缩和自适应生成预算，并使用检索指标、生成指标和分组分析评估系统表现。
 
-实验结果表明，`hybrid_raptor` 取得最强整体检索表现，Recall@5 = 0.9813，MRR = 0.9822，NDCG = 0.9723。面向最终问答生成时，`graph_raptor_pruned` 在保持 Recall@5 = 0.9667 的同时，将 Context Precision 提升到 0.3864，并在自适应生成评估中达到 0.9909 Faithfulness、0.9814 Answer Coverage 和 0.9687 Citation Recall。
+实验结果表明，`hybrid_raptor` 取得最强整体检索表现，Recall@5 = 0.9813，MRR = 0.9822，NDCG = 0.9723。面向最终问答生成时，`graph_raptor_pruned` 在保持 Recall@5 = 0.9667 的同时，将 Context Precision 提升到 0.5353，并在自适应生成评估中达到 0.9909 Faithfulness、0.9814 Answer Coverage 和 0.9687 Citation Recall。
 
 ## 1. 研究背景
 
@@ -94,7 +94,7 @@ pytest -q
 | raptor | 0.9747 | 0.9763 | 0.9667 | 0.2699 |
 | raptor_topdown | 0.9747 | 0.9757 | 0.9652 | 0.2699 |
 | hybrid_raptor | 0.9813 | 0.9822 | 0.9723 | 0.2725 |
-| graph_raptor_pruned | 0.9667 | 0.9833 | 0.9663 | 0.3864 |
+| graph_raptor_pruned | 0.9667 | 0.9833 | 0.9663 | 0.5353 |
 
 `hybrid_raptor` 说明 RAPTOR 与 GraphRAG 融合后能提升整体召回和排序质量。`graph_raptor_pruned` 的 Recall@5 略低，但 Context Precision 更高，说明证据压缩有效减少了最终上下文中的噪声。
 
@@ -106,7 +106,7 @@ pytest -q
 |---|---:|
 | Faithfulness | 0.9909 |
 | Answer Coverage | 0.9814 |
-| Citation Accuracy | 0.4065 |
+| Citation Accuracy | 0.4730 |
 | Citation Recall | 0.9687 |
 
 生成结果说明，压缩后的证据上下文可以保持很高的内容忠实度和答案覆盖率。Citation Accuracy 仍是后续优化重点，因为多跳问题和概念邻接扩展会返回部分主题相关但非直接证据的 chunk。

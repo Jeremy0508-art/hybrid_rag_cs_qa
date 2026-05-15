@@ -4,6 +4,8 @@
 - Generator: `extractive`
 - Used generators: `extractive`
 - Top-k evidence: `3`
+- Adaptive top-k: `False`
+- Multi-hop top-k: `None`
 - Questions: `750`
 - Limit: `None`
 

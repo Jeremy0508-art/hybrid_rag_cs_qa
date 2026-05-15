@@ -61,11 +61,11 @@ pytest -q
 |---|---:|---:|---:|---:|
 | naive | 0.9667 | 0.9817 | 0.9638 | 0.2667 |
 | hybrid_raptor | 0.9813 | 0.9822 | 0.9723 | 0.2725 |
-| graph_raptor_pruned | 0.9667 | 0.9833 | 0.9663 | 0.3864 |
+| graph_raptor_pruned | 0.9667 | 0.9833 | 0.9663 | 0.5353 |
 
 | Generator Setup | Faithfulness | Answer Coverage | Citation Accuracy | Citation Recall |
 |---|---:|---:|---:|---:|
-| `graph_raptor_pruned`, adaptive top-k | 0.9909 | 0.9814 | 0.4065 | 0.9687 |
+| `graph_raptor_pruned`, adaptive top-k | 0.9909 | 0.9814 | 0.4730 | 0.9687 |
 
 ## 4. Local Ollama LLM
 

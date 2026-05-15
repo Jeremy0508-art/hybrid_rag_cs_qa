@@ -84,8 +84,8 @@
 <text x="1086.8" y="327.5" font-family="Arial, sans-serif" font-size="10" font-weight="400" text-anchor="middle" fill="#334155">0.27</text>
 <rect x="1099.2" y="334.6" width="20.0" height="95.4" fill="#ea580c" rx="3"/>
 <text x="1109.2" y="326.6" font-family="Arial, sans-serif" font-size="10" font-weight="400" text-anchor="middle" fill="#334155">0.27</text>
-<rect x="1121.6" y="294.8" width="20.0" height="135.2" fill="#0f766e" rx="3"/>
-<text x="1131.6" y="286.8" font-family="Arial, sans-serif" font-size="10" font-weight="400" text-anchor="middle" fill="#334155">0.39</text>
+<rect x="1121.6" y="242.6" width="20.0" height="187.4" fill="#0f766e" rx="3"/>
+<text x="1131.6" y="234.6" font-family="Arial, sans-serif" font-size="10" font-weight="400" text-anchor="middle" fill="#334155">0.54</text>
 <text x="1060.0" y="468.0" font-family="Arial, sans-serif" font-size="14" font-weight="400" text-anchor="middle" fill="#0f172a">Context Precision</text>
 <rect x="80.0" y="483.0" width="14.0" height="14.0" fill="#4b5563" rx="3"/>
 <text x="102.0" y="495.0" font-family="Arial, sans-serif" font-size="13" font-weight="400" text-anchor="start" fill="#0f172a">naive</text>
