@@ -2,6 +2,18 @@
 
 This analysis compares per-question retrieval behavior across methods.
 
+## Manual Summary
+
+The expanded 3,600-QA benchmark is intentionally more structured than the earlier small benchmark: each course topic is represented through multiple aspects, and several question types ask the retriever to connect neighboring sections. This explains why `raptor` performs especially well. Its summary tree can recover the high-level topic and then surface the right section-level evidence, reaching 0.9960 Recall@5 with only 29 partial misses.
+
+Those 29 `raptor` misses are all `multi_hop_paraphrase` questions. The common pattern is that the query names a source concept and a target concept indirectly, while the retrieved top-5 focuses heavily on one side of the pair. For example, questions asking for a "summary perspective" from one topic and a "foundations perspective" from the next topic often retrieve several sections from the target topic but miss the summary section from the source topic.
+
+`hybrid_raptor` remains strong, but it is not strictly better than pure collapsed RAPTOR on this dataset. In the sampled regressions, RRF fusion tends to mix BM25, dense, graph, and RAPTOR candidates in a way that over-represents the more lexically obvious side of a concept-linking question. This mostly affects `concept_linking` and title-explicit multi-hop questions, where one gold evidence id is retrieved but the paired evidence id is pushed out of the top 5.
+
+`graph_raptor_pruned` should be read as a generation-oriented method rather than the highest-recall retriever. Its 253 partial misses are concentrated in `concept_linking`, `multi_hop`, and `multi_hop_paraphrase` questions because the evidence compression step keeps the final context small. That tradeoff is visible in the generation reports: `hybrid_raptor_adaptive` reaches higher Citation Recall, while `graph_raptor_pruned_adaptive` keeps a more selective evidence context.
+
+The main remaining risk is dataset regularity. The high RAPTOR score is credible for this structured course corpus, but future work should add more natural, manually phrased scenario questions to test whether the same ranking advantage holds when question wording is less template-like.
+
 ## GraphRAG Improvements Over Naive
 
 - `expanded-q025-8` How are deadlock in Deadlock and Resource Allocation Foundations and virtual memory in Virtual Memory and Page Replacement Foundations connected?
