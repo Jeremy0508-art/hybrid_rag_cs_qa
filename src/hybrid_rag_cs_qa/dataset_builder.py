@@ -18,12 +18,26 @@ class TopicSpec:
     example: str
 
 
+@dataclass(frozen=True)
+class AspectSpec:
+    name: str
+    note: str
+    learner_goal: str
+
+
 ASPECTS = (
-    ("Foundations", "defines the core vocabulary and the baseline mental model."),
-    ("Mechanisms", "explains the internal steps and the conditions that make the idea work."),
-    ("Tradeoffs", "compares benefits, costs, failure modes, and design alternatives."),
-    ("Applications", "connects the idea to realistic engineering and exam-style scenarios."),
-    ("Evaluation", "describes how to judge whether the idea has been applied correctly."),
+    AspectSpec("Foundations", "defines the core vocabulary and the baseline mental model.", "state the main concept precisely"),
+    AspectSpec("Mechanisms", "explains the internal steps and the conditions that make the idea work.", "explain the internal process"),
+    AspectSpec("Tradeoffs", "compares benefits, costs, failure modes, and design alternatives.", "compare design choices and costs"),
+    AspectSpec("Applications", "connects the idea to realistic engineering and exam-style scenarios.", "apply the concept to a concrete scenario"),
+    AspectSpec("Evaluation", "describes how to judge whether the idea has been applied correctly.", "choose suitable evaluation signals"),
+    AspectSpec("Implementation", "focuses on data structures, state, and operational details needed to build the idea.", "identify implementation details"),
+    AspectSpec("Diagnostics", "shows symptoms, debugging clues, and checks used when the idea behaves unexpectedly.", "diagnose a failure or performance issue"),
+    AspectSpec("Misconceptions", "contrasts the correct interpretation with common but misleading explanations.", "correct a common misconception"),
+    AspectSpec("Design Patterns", "turns the idea into reusable design guidance for systems and coursework.", "select a robust design pattern"),
+    AspectSpec("Failure Modes", "lists the edge cases and operating conditions that cause the idea to break down.", "recognize likely failure modes"),
+    AspectSpec("Connections", "links the idea to neighboring concepts that are often needed in multi-hop reasoning.", "connect related concepts"),
+    AspectSpec("Summary", "compresses the idea into higher-level signals useful for hierarchical retrieval.", "summarize the concept at a higher level"),
 )
 
 
@@ -319,15 +333,18 @@ def build_expanded_dataset(corpus_path: Path, qa_path: Path) -> tuple[int, int]:
 def _build_documents() -> list[dict[str, object]]:
     documents: list[dict[str, object]] = []
     for topic in TOPICS:
-        for aspect, aspect_note in ASPECTS:
-            title = f"{topic.title} {aspect}"
+        for aspect in ASPECTS:
+            title = f"{topic.title} {aspect.name}"
             chunk_id = f"{slug(topic.course)}-{slug(title)}"
             body = (
                 f"{topic.definition} {topic.mechanism} {topic.tradeoff} {topic.example} "
-                f"The {aspect.lower()} view of {topic.title} {aspect_note} "
+                f"The {aspect.name.lower()} view of {topic.title} {aspect.note} "
+                f"A student should be able to {aspect.learner_goal} when reading this section. "
                 f"Important concepts include {', '.join(topic.concepts)}. "
+                f"A common grounded answer should connect {topic.concepts[0]} with {topic.concepts[-1]} "
+                f"and should avoid unsupported claims outside this passage. "
                 f"In a RAG benchmark, this passage should be treated as evidence for questions about "
-                f"{topic.title}, especially when the question asks about {aspect.lower()}."
+                f"{topic.title}, especially when the question asks about {aspect.name.lower()}."
             )
             documents.append(
                 {
@@ -347,10 +364,19 @@ def _build_qa_items(documents: list[dict[str, object]]) -> list[dict[str, object
     for index, document in enumerate(documents):
         topic = document["topic"]
         assert isinstance(topic, TopicSpec)
+        aspect = document["aspect"]
+        assert isinstance(aspect, AspectSpec)
         evidence_id = str(document["id"])
         next_document = documents[(index + 1) % len(documents)]
         next_topic = next_document["topic"]
         assert isinstance(next_topic, TopicSpec)
+        next_aspect = next_document["aspect"]
+        assert isinstance(next_aspect, AspectSpec)
+        linked_document = documents[(index + len(ASPECTS)) % len(documents)]
+        linked_topic = linked_document["topic"]
+        assert isinstance(linked_topic, TopicSpec)
+        linked_aspect = linked_document["aspect"]
+        assert isinstance(linked_aspect, AspectSpec)
 
         qa_items.extend(
             [
@@ -361,7 +387,7 @@ def _build_qa_items(documents: list[dict[str, object]]) -> list[dict[str, object
                     topic.definition,
                     [evidence_id],
                     topic,
-                    document["aspect"],
+                    aspect,
                     "definition",
                     "easy",
                     False,
@@ -373,7 +399,7 @@ def _build_qa_items(documents: list[dict[str, object]]) -> list[dict[str, object
                     topic.mechanism,
                     [evidence_id],
                     topic,
-                    document["aspect"],
+                    aspect,
                     "mechanism",
                     "medium",
                     False,
@@ -385,7 +411,7 @@ def _build_qa_items(documents: list[dict[str, object]]) -> list[dict[str, object
                     topic.tradeoff,
                     [evidence_id],
                     topic,
-                    document["aspect"],
+                    aspect,
                     "comparison",
                     "medium",
                     False,
@@ -393,11 +419,87 @@ def _build_qa_items(documents: list[dict[str, object]]) -> list[dict[str, object
                 _qa(
                     index,
                     4,
+                    f"How would {document['title']} appear in a realistic course or engineering scenario?",
+                    topic.example,
+                    [evidence_id],
+                    topic,
+                    aspect,
+                    "application",
+                    "medium",
+                    False,
+                ),
+                _qa(
+                    index,
+                    5,
+                    f"What misconception should be avoided when explaining {document['title']}?",
+                    (
+                        f"It is misleading to treat {topic.concepts[0]} as a standalone keyword only; "
+                        f"the answer should connect it to {topic.concepts[-1]} and the section evidence."
+                    ),
+                    [evidence_id],
+                    topic,
+                    aspect,
+                    "misconception",
+                    "medium",
+                    False,
+                    "paraphrase",
+                ),
+                _qa(
+                    index,
+                    6,
+                    f"Which signals would help diagnose a problem related to {document['title']}?",
+                    (
+                        f"Useful signals include the mechanism, the tradeoff, and whether the observed behavior "
+                        f"matches the expected role of {', '.join(topic.concepts[:2])}."
+                    ),
+                    [evidence_id],
+                    topic,
+                    aspect,
+                    "diagnostic",
+                    "hard",
+                    False,
+                    "citation-grounded",
+                ),
+                _qa(
+                    index,
+                    7,
+                    f"What high-level summary would help retrieve {document['title']} in a hierarchical RAG system?",
+                    (
+                        f"{topic.title} connects {topic.concepts[0]} with {topic.concepts[-1]} through "
+                        f"its definition, mechanism, tradeoff, and scenario evidence."
+                    ),
+                    [evidence_id],
+                    topic,
+                    aspect,
+                    "hierarchical_summary",
+                    "medium",
+                    False,
+                    "summary-level",
+                ),
+                _qa(
+                    index,
+                    8,
+                    (
+                        f"How are {topic.concepts[0]} in {document['title']} and "
+                        f"{linked_topic.concepts[0]} in {linked_document['title']} connected?"
+                    ),
+                    f"{topic.example} {linked_topic.example}",
+                    [evidence_id, str(linked_document["id"])],
+                    topic,
+                    aspect,
+                    "concept_linking",
+                    "hard",
+                    True,
+                    "title-explicit",
+                ),
+                _qa(
+                    index,
+                    9,
                     f"Why might {document['title']} and {next_document['title']} both matter in a RAG-style system?",
                     f"{topic.example} {next_topic.example}",
                     [evidence_id, str(next_document["id"])],
                     topic,
-                    document["aspect"],
+                    aspect,
                     "multi_hop",
                     "hard",
                     True,
@@ -405,16 +507,16 @@ def _build_qa_items(documents: list[dict[str, object]]) -> list[dict[str, object
                 ),
                 _qa(
                     index,
-                    5,
+                    10,
                     (
-                        f"Why would the {str(document['aspect']).lower()} perspective on {topic.concepts[0]} "
-                        f"and the {str(next_document['aspect']).lower()} perspective on {next_topic.concepts[0]} "
+                        f"Why would the {aspect.name.lower()} perspective on {topic.concepts[0]} "
+                        f"and the {next_aspect.name.lower()} perspective on {next_topic.concepts[0]} "
                         "need to be combined when answering a grounded systems question?"
                     ),
                     f"{topic.example} {next_topic.example}",
                     [evidence_id, str(next_document["id"])],
                     topic,
-                    document["aspect"],
+                    aspect,
                     "multi_hop_paraphrase",
                     "hard",
                     True,
@@ -438,6 +540,7 @@ def _qa(
     requires_multi_hop: bool,
     answer_style: str = "citation-grounded",
 ) -> dict[str, object]:
+    aspect_name = aspect.name if isinstance(aspect, AspectSpec) else str(aspect)
     return {
         "id": f"expanded-q{doc_index + 1:03d}-{variant}",
         "question": question,
@@ -447,7 +550,7 @@ def _qa(
         "type": question_type,
         "topic": topic.course,
         "subtopic": topic.title,
-        "aspect": str(aspect),
+        "aspect": aspect_name,
         "expected_concepts": list(topic.concepts),
         "requires_multi_hop": requires_multi_hop,
         "answer_style": answer_style,

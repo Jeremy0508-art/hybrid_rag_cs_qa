@@ -1,10 +1,10 @@
 # Hybrid GraphRAG + RAPTOR for CS Course QA
 
-针对计算机课程问答中普通 RAG 容易漏掉关键术语、跨知识点问题答不全、检索结果混入无关内容的问题，提出并实现了一个 Hybrid GraphRAG + RAPTOR 的层次化检索增强问答架构。系统融合 BM25 稀疏检索、TF-IDF dense retrieval、RRF 融合排序、课程概念图扩展、RAPTOR summary tree、adaptive evidence pruning 和 citation-aware generation，在 150 个课程文档与 750 条标注 QA 上，整体最优 Recall@5 达到 0.9813，即 98.13% 的问题可以在前 5 条检索结果中召回正确证据；同时最终 evidence context 的 Context Precision 稳定在 0.43-0.54 区间。深入研究并成功复现了 ICLR 2024 顶会论文《RAPTOR: Recursive Abstractive Processing for Tree-Organized Retrieval》中“递归聚类 + 层次摘要树 + 多层级检索”的核心思想，并结合课程问答场景重新设计到 `hybrid_rag_cs_qa` 系统中：用 RAPTOR summary node 补充跨 chunk 的高层语义线索，用 GraphRAG 概念图补充显式知识关系，再通过统一的 evidence-budget compression 控制最终上下文质量，形成一个可复现、可评估、可展示的课程问答 RAG 实验闭环。
+针对计算机课程问答中普通 RAG 容易漏掉关键术语、跨知识点问题答不全、检索结果混入无关内容的问题，提出并实现了一个 Hybrid GraphRAG + RAPTOR 的层次化检索增强问答架构。系统融合 BM25 稀疏检索、TF-IDF dense retrieval、RRF 融合排序、课程概念图扩展、RAPTOR summary tree、adaptive evidence pruning 和 citation-aware generation；当前数据集已扩展到 360 个课程文档与 3,600 条标注 QA，覆盖定义、机制、比较、应用、误区纠正、诊断、层次摘要、概念连接和多跳问题。在 3,600 QA 评估中，RAPTOR collapsed retrieval 的 Recall@5 达到 0.9960，即 99.60% 的问题可以在前 5 条检索结果中召回正确证据；`hybrid_raptor` 达到 0.9806 Recall@5，`graph_raptor_pruned` 在面向生成的压缩上下文中达到 0.4533 Context Precision。深入研究并成功复现了 ICLR 2024 顶会论文《RAPTOR: Recursive Abstractive Processing for Tree-Organized Retrieval》中“递归聚类 + 层次摘要树 + 多层级检索”的核心思想，并结合课程问答场景重新设计到 `hybrid_rag_cs_qa` 系统中：用 RAPTOR summary node 补充跨 chunk 的高层语义线索，用 GraphRAG 概念图补充显式知识关系，再通过统一的 evidence-budget compression 控制最终上下文质量，形成一个可复现、可评估、可展示的课程问答 RAG 实验闭环。
 
 ## Highlights
 
-- 构建 150 个课程文档和 750 条标注 QA，覆盖 citation-grounded、title-explicit、paraphrase 和 multi-hop paraphrase 问题。
+- 构建 360 个课程文档和 3,600 条标注 QA，覆盖 citation-grounded、title-explicit、paraphrase、summary-level 和 multi-hop paraphrase 问题。
 - 实现 BM25 + dense retrieval + RRF 的混合检索。
 - 实现课程概念图扩展，用于 GraphRAG 和多跳候选补充。
 - 实现 RAPTOR tree：chunk 聚类、summary node 生成、递归树构建、collapsed 和 top-down 检索。
@@ -15,17 +15,17 @@
 
 ## Key Results
 
-检索评估，750 条 QA：
+检索评估，3,600 条 QA：
 
 | Method | Recall@5 | MRR | NDCG | Context Precision |
 |---|---:|---:|---:|---:|
-| naive | 0.9667 | 0.9817 | 0.9638 | 0.4391 |
-| hybrid | 0.9713 | 0.9756 | 0.9635 | 0.4413 |
-| graph_reflect | 0.9773 | 0.9554 | 0.9524 | 0.5307 |
-| raptor | 0.9747 | 0.9763 | 0.9667 | 0.5396 |
-| raptor_topdown | 0.9747 | 0.9757 | 0.9652 | 0.5209 |
-| hybrid_raptor | 0.9813 | 0.9822 | 0.9723 | 0.4400 |
-| graph_raptor_pruned | 0.9667 | 0.9833 | 0.9663 | 0.5353 |
+| naive | 0.9618 | 0.9979 | 0.9685 | 0.4068 |
+| hybrid | 0.9647 | 0.9071 | 0.9025 | 0.4072 |
+| graph_reflect | 0.9256 | 0.8868 | 0.8744 | 0.4522 |
+| raptor | 0.9960 | 0.9972 | 0.9945 | 0.5272 |
+| raptor_topdown | 0.9910 | 0.9927 | 0.9890 | 0.5170 |
+| hybrid_raptor | 0.9806 | 0.9942 | 0.9758 | 0.4081 |
+| graph_raptor_pruned | 0.9587 | 0.9418 | 0.9307 | 0.4533 |
 
 Context Precision is measured on the final evidence context after a common evidence-budget compression step. Recall@5, MRR and NDCG are still measured on the original Top-5 retrieval results.
 
@@ -33,9 +33,9 @@ Context Precision is measured on the final evidence context after a common evide
 
 | Faithfulness | Answer Coverage | Citation Accuracy | Citation Recall |
 |---:|---:|---:|---:|
-| 0.9909 | 0.9814 | 0.4730 | 0.9687 |
+| 0.9930 | 0.8519 | 0.3603 | 0.8351 |
 
-主要结论：`hybrid_raptor` 是整体召回和排序最强的检索方法；`graph_raptor_pruned` 更适合作为生成入口，因为它用少量召回换取更干净的最终证据上下文。
+主要结论：在扩展后的 3,600 QA 上，`raptor` 是整体召回和排序最强的检索方法；`graph_raptor_pruned` 更适合作为生成入口，因为它在融合 GraphRAG 和 RAPTOR 候选后会压缩最终证据上下文。
 
 ## Quick Start
 
@@ -92,8 +92,8 @@ cs-rag ask "Why can GraphRAG improve recall but reduce context precision?" --gen
 ## Project Structure
 
 ```text
-data/raw/cs_courses_expanded.md       # 150 个课程文档
-data/qa/eval_qa_expanded.jsonl        # 750 条标注 QA
+data/raw/cs_courses_expanded.md       # 360 个课程文档
+data/qa/eval_qa_expanded.jsonl        # 3,600 条标注 QA
 src/hybrid_rag_cs_qa/                 # RAG、GraphRAG、RAPTOR、evaluation、generation
 tests/                                # 数据、检索、RAPTOR、生成相关测试
 artifacts/                            # 构建出的索引、reranker、RAPTOR tree
@@ -124,4 +124,4 @@ RUNBOOK.md                            # 复现手册
 
 ## Resume Bullet
 
-独立构建面向计算机课程问答的 Hybrid GraphRAG + RAPTOR 系统，将数据集扩展到 150 个课程文档和 750 条标注 QA；实现 BM25 + dense RRF 融合检索、GraphRAG 概念扩展、RAPTOR summary tree、Hybrid RAPTOR 检索、证据压缩和自适应生成评估，使整体检索 Recall@5 达到 0.9813，并在生成侧达到 0.9909 Faithfulness、0.9814 Answer Coverage 和 0.9687 Citation Recall。
+独立构建面向计算机课程问答的 Hybrid GraphRAG + RAPTOR 系统，将数据集扩展到 360 个课程文档和 3,600 条标注 QA；实现 BM25 + dense RRF 融合检索、GraphRAG 概念扩展、RAPTOR summary tree、Hybrid RAPTOR 检索、证据压缩和自适应生成评估，使 RAPTOR 检索在 3,600 QA 上达到 0.9960 Recall@5，并在生成侧达到 0.9930 Faithfulness、0.8519 Answer Coverage 和 0.8351 Citation Recall。

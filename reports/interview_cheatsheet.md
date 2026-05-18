@@ -2,7 +2,7 @@
 
 ## 30 秒介绍
 
-我做了一个面向计算机课程问答的成熟 RAG 实验系统。项目从原来的基础 RAG 扩展到 150 个课程文档和 750 条标注 QA，覆盖普通事实问答、改写问法和多跳问题。系统实现了 BM25 + dense 混合检索、GraphRAG 概念扩展、RAPTOR summary tree、Hybrid RAPTOR 融合检索、证据压缩和自适应生成预算。当前最强整体检索方法 `hybrid_raptor` 的 Recall@5 达到 0.9813；面向生成的 `graph_raptor_pruned` 在保持 0.9667 Recall@5 的同时提供更高 Context Precision，并在生成评估中达到 0.9909 Faithfulness 和 0.9687 Citation Recall。
+我做了一个面向计算机课程问答的成熟 RAG 实验系统。项目从原来的基础 RAG 扩展到 360 个课程文档和 3,600 条标注 QA，覆盖普通事实问答、改写问法、摘要型问题、概念连接和多跳问题。系统实现了 BM25 + dense 混合检索、GraphRAG 概念扩展、RAPTOR summary tree、Hybrid RAPTOR 融合检索、证据压缩和自适应生成预算。3,600 QA 评估中，RAPTOR collapsed retrieval 的 Recall@5 达到 0.9960；面向生成的 `graph_raptor_pruned` 在压缩最终证据上下文的同时，在生成评估中达到 0.9930 Faithfulness 和 0.8351 Citation Recall。
 
 ## 为什么不是普通 RAG
 
@@ -10,7 +10,7 @@
 
 ## 最重要实验结论
 
-`hybrid_raptor` 是整体检索最强方法：Recall@5 = 0.9813，MRR = 0.9822，NDCG = 0.9723。`graph_raptor_pruned` 是更适合生成的折中方案：Recall@5 = 0.9667，MRR = 0.9833，Context Precision = 0.5353。生成侧使用 `graph_raptor_pruned` + adaptive top-k 后，Faithfulness = 0.9909，Answer Coverage = 0.9814，Citation Recall = 0.9687。
+`raptor` 是整体检索最强方法：Recall@5 = 0.9960，MRR = 0.9972，NDCG = 0.9945。`graph_raptor_pruned` 是更适合生成的折中方案：Recall@5 = 0.9587，MRR = 0.9418，Context Precision = 0.4533。生成侧使用 `graph_raptor_pruned` + adaptive top-k 后，Faithfulness = 0.9930，Answer Coverage = 0.8519，Citation Recall = 0.8351。
 
 ## 可被追问的问题
 
@@ -28,4 +28,4 @@ A: 没有直接照搬。参考项目用于理解聚类、summary 和树构建思
 
 ## 简历 bullet
 
-独立构建面向计算机课程问答的 Hybrid GraphRAG + RAPTOR 系统，将数据集扩展到 150 个课程文档和 750 条标注 QA；实现 BM25 + dense RRF 融合检索、GraphRAG 概念扩展、RAPTOR summary tree、Hybrid RAPTOR 检索、证据压缩和自适应生成评估，使整体检索 Recall@5 达到 0.9813，并在生成侧达到 0.9909 Faithfulness、0.9814 Answer Coverage 和 0.9687 Citation Recall。
+独立构建面向计算机课程问答的 Hybrid GraphRAG + RAPTOR 系统，将数据集扩展到 360 个课程文档和 3,600 条标注 QA；实现 BM25 + dense RRF 融合检索、GraphRAG 概念扩展、RAPTOR summary tree、Hybrid RAPTOR 检索、证据压缩和自适应生成评估，使 RAPTOR 检索在 3,600 QA 上达到 0.9960 Recall@5，并在生成侧达到 0.9930 Faithfulness、0.8519 Answer Coverage 和 0.8351 Citation Recall。

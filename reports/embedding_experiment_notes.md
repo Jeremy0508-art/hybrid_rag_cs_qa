@@ -30,5 +30,5 @@ This does not block the project architecture. If the model is already cached loc
 
 1. Pre-download `BAAI/bge-small-zh-v1.5` in a stable network environment.
 2. Set `CS_RAG_EMBEDDING_MODEL` to a local model directory.
-3. Compare BGE/E5 against the TF-IDF baseline on the same 750 QA benchmark.
+3. Compare BGE/E5 against the TF-IDF baseline on the same 3,600 QA benchmark.
 4. Add a CrossEncoder or bge-reranker after candidate fusion for paraphrase-heavy questions.

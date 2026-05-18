@@ -59,13 +59,14 @@ pytest -q
 
 | Method | Recall@5 | MRR | NDCG | Context Precision |
 |---|---:|---:|---:|---:|
-| naive | 0.9667 | 0.9817 | 0.9638 | 0.4391 |
-| hybrid_raptor | 0.9813 | 0.9822 | 0.9723 | 0.4400 |
-| graph_raptor_pruned | 0.9667 | 0.9833 | 0.9663 | 0.5353 |
+| naive | 0.9618 | 0.9979 | 0.9685 | 0.4068 |
+| raptor | 0.9960 | 0.9972 | 0.9945 | 0.5272 |
+| hybrid_raptor | 0.9806 | 0.9942 | 0.9758 | 0.4081 |
+| graph_raptor_pruned | 0.9587 | 0.9418 | 0.9307 | 0.4533 |
 
 | Generator Setup | Faithfulness | Answer Coverage | Citation Accuracy | Citation Recall |
 |---|---:|---:|---:|---:|
-| `graph_raptor_pruned`, adaptive top-k | 0.9909 | 0.9814 | 0.4730 | 0.9687 |
+| `graph_raptor_pruned`, adaptive top-k | 0.9930 | 0.8519 | 0.3603 | 0.8351 |
 
 ## 4. Local Ollama LLM
 
@@ -86,7 +87,7 @@ cs-rag ask "Why can GraphRAG improve recall but reduce context precision?" --gen
 ## 5. Demo Order
 
 1. 讲问题：普通 chunk 相似度很难同时处理术语精确匹配、改写问法、多跳线索和引用质量。
-2. 讲数据：项目已扩展到 150 个课程文档和 750 条 QA，并加入分组标签。
+2. 讲数据：项目已扩展到 360 个课程文档和 3,600 条 QA，并加入分组标签。
 3. 讲方法：BM25 + dense、GraphRAG、RAPTOR tree、Hybrid RAPTOR、evidence pruning。
 4. 讲结果：`hybrid_raptor` 取得最高整体 Recall@5，`graph_raptor_pruned` 更适合作为生成入口。
 5. 讲生成：adaptive top-k 为多跳问题提供更多证据预算，同时保留压缩后的上下文质量。

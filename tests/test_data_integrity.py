@@ -9,13 +9,16 @@ def test_qa_evidence_ids_exist_and_ids_are_unique():
     chunk_ids = {chunk.id for chunk in chunks}
     qa_ids = [item.id for item in qa_items]
 
-    assert len(chunks) >= 120
-    assert len(qa_items) >= 500
+    assert len(chunks) >= 300
+    assert len(qa_items) >= 3000
     assert len(qa_ids) == len(set(qa_ids))
     assert {item.topic for item in qa_items} - {"unknown"}
     assert any(item.requires_multi_hop for item in qa_items)
     assert all(item.expected_concepts for item in qa_items)
     assert any(item.answer_style == "paraphrase" for item in qa_items)
+    assert any(item.answer_style == "summary-level" for item in qa_items)
+    assert any(item.question_type == "concept_linking" for item in qa_items)
+    assert any(item.question_type == "hierarchical_summary" for item in qa_items)
     assert any(item.question_type == "multi_hop_paraphrase" for item in qa_items)
 
     missing = {

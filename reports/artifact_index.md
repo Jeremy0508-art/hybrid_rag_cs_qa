@@ -6,8 +6,8 @@ This file lists the main artifacts to inspect, reproduce, or present.
 
 | File | Purpose |
 |---|---|
-| `data/raw/cs_courses_expanded.md` | Expanded 150-document CS course corpus |
-| `data/qa/eval_qa_expanded.jsonl` | Expanded 750-item QA benchmark |
+| `data/raw/cs_courses_expanded.md` | Expanded 360-document CS course corpus |
+| `data/qa/eval_qa_expanded.jsonl` | Expanded 3,600-item QA benchmark |
 
 ## Core Code
 

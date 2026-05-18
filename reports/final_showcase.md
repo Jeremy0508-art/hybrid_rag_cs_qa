@@ -12,11 +12,11 @@
 
 ## 关键发现
 
-- 数据集已从 34 个知识块和 100 条 QA 扩展到 150 个课程文档和 750 条标注 QA，并覆盖 citation-grounded、title-explicit、paraphrase 和 multi-hop paraphrase 问题。
-- `hybrid_raptor` 在整体检索上表现最好：Recall@5 = 0.9813，MRR = 0.9822，NDCG = 0.9723。
-- `graph_raptor_pruned` 更偏向高质量上下文：Recall@5 = 0.9667，MRR = 0.9833，Context Precision = 0.5353；各方法的 Context Precision 统一按最终 evidence context 计算。
+- 数据集已从 34 个知识块和 100 条 QA 扩展到 360 个课程文档和 3,600 条标注 QA，并覆盖 citation-grounded、title-explicit、paraphrase、summary-level 和 multi-hop paraphrase 问题。
+- `raptor` 在整体检索上表现最好：Recall@5 = 0.9960，MRR = 0.9972，NDCG = 0.9945。
+- `graph_raptor_pruned` 更偏向可控生成上下文：Recall@5 = 0.9587，MRR = 0.9418，Context Precision = 0.4533；各方法的 Context Precision 统一按最终 evidence context 计算。
 - 在更难的 paraphrase 子集上，`graph_raptor_pruned` 的 Context Precision = 0.4433，说明证据压缩对低噪声引用更有价值。
-- 生成评估采用 `graph_raptor_pruned` + adaptive top-k：Faithfulness = 0.9909，Answer Coverage = 0.9814，Citation Recall = 0.9687。
+- 生成评估采用 `graph_raptor_pruned` + adaptive top-k：Faithfulness = 0.9930，Answer Coverage = 0.8519，Citation Recall = 0.8351。
 - RAPTOR 的 summary node 目前采用本地确定性摘要器，保证测试和实验可复现；后续可切换为 LLM summarizer 或更强 embedding backend。
 
 ## 当前推荐命令

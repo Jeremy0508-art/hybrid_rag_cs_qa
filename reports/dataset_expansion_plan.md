@@ -10,9 +10,9 @@ reranking, and citation-aware generation.
 
 | Phase | Documents | Fine-grained chunks | QA items |
 |---|---:|---:|---:|
-| Phase 1 - current | 150 | 150 coarse course documents | 750 |
-| Phase 2 | 180-250 | 1,500-2,500 | 1,000 |
-| Phase 3 | 350+ | 3,000+ | 2,000+ |
+| Phase 1 - previous | 150 | 150 coarse course documents | 750 |
+| Phase 2 - current | 360 | 360 section-level course documents | 3,600 |
+| Phase 3 | 500+ | 1,500+ fine-grained chunks | 5,000+ |
 
 ## Topic Coverage
 
@@ -65,12 +65,16 @@ Each QA row should eventually include:
   retrieval.
 - Evaluation reports are grouped by method, topic, difficulty, and question type.
 
-## Current Phase 1 Status
+## Current Phase 2 Status
 
-- Complete: `data/raw/cs_courses_expanded.md` contains 150 course documents.
-- Complete: `data/qa/eval_qa_expanded.jsonl` contains 750 QA items.
+- Complete: `data/raw/cs_courses_expanded.md` contains 360 course documents.
+- Complete: `data/qa/eval_qa_expanded.jsonl` contains 3,600 QA items.
 - Complete: QA metadata includes topic, subtopic, expected concepts,
   multi-hop flag, and answer style.
+- Complete: QA now covers definition, mechanism, comparison, application,
+  misconception, diagnostic, hierarchical summary, concept linking, multi-hop,
+  and multi-hop paraphrase questions.
 - Complete: retrieval and generation reports include grouped evaluation.
-- Next: split coarse course documents into finer section-level chunks before
-  Phase 2 scaling.
+- Next: rerun retrieval and generation evaluations on the 3,600-item benchmark,
+  then decide whether Phase 3 should add more real course material or finer
+  chunk-level annotations.
