@@ -1,8 +1,6 @@
 # Hybrid GraphRAG + RAPTOR for CS Course QA
 
-针对计算机课程问答中普通 RAG 容易漏召回精确术语、难以处理跨知识点多跳问题、以及检索上下文噪声较高的问题，提出并实现了一个 Hybrid GraphRAG + RAPTOR 的层次化检索增强问答架构。系统融合 BM25 稀疏检索、TF-IDF dense retrieval、RRF 融合排序、课程概念图扩展、RAPTOR summary tree、adaptive evidence pruning 和 citation-aware generation，在 150 个课程文档与 750 条标注 QA 上将整体最优 Recall@5 提升到 0.9813，并将最终 evidence context 的 Context Precision 稳定在 0.43-0.54 区间。
-
-项目学习并复现了 RAPTOR: Recursive Abstractive Processing for Tree-Organized Retrieval 论文中“递归聚类 + 层次摘要树 + 多层级检索”的核心思想，同时没有直接照搬参考项目代码，而是将该思想融合进自研的 `hybrid_rag_cs_qa` 系统：用 RAPTOR summary node 补充跨 chunk 的高层语义线索，用 GraphRAG 概念图补充显式知识关系，再通过统一的 evidence-budget compression 控制最终上下文质量，形成一个可复现、可评估、可展示的课程问答 RAG 实验闭环。
+针对计算机课程问答中普通 RAG 容易漏掉关键术语、跨知识点问题答不全、检索结果混入无关内容的问题，提出并实现了一个 Hybrid GraphRAG + RAPTOR 的层次化检索增强问答架构。系统融合 BM25 稀疏检索、TF-IDF dense retrieval、RRF 融合排序、课程概念图扩展、RAPTOR summary tree、adaptive evidence pruning 和 citation-aware generation，在 150 个课程文档与 750 条标注 QA 上，整体最优 Recall@5 达到 0.9813，即 98.13% 的问题可以在前 5 条检索结果中召回正确证据；同时最终 evidence context 的 Context Precision 稳定在 0.43-0.54 区间。深入研究并成功复现了 ICLR 2024 顶会论文《RAPTOR: Recursive Abstractive Processing for Tree-Organized Retrieval》中“递归聚类 + 层次摘要树 + 多层级检索”的核心思想，并结合课程问答场景重新设计到 `hybrid_rag_cs_qa` 系统中：用 RAPTOR summary node 补充跨 chunk 的高层语义线索，用 GraphRAG 概念图补充显式知识关系，再通过统一的 evidence-budget compression 控制最终上下文质量，形成一个可复现、可评估、可展示的课程问答 RAG 实验闭环。
 
 ## Highlights
 
